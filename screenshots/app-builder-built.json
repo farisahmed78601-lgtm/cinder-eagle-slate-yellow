@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hina",
+      "hasCanvas": false,
+      "bodyTextLen": 382,
+      "bodyTextHash": "38c31e932c8f31183fe70da4b6b879aa70dd579d256437f33549bed2a94ff50c",
+      "bodyTextPrefix": "Hina Founded by Hameed EN اردو سنڌي New chat No conversations ye",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hina",
+      "hasCanvas": false,
+      "bodyTextLen": 296,
+      "bodyTextHash": "950d281d5c01bf9c6495ff045f5a6269325dd748ecd95f73329dde0d3fb6b619",
+      "bodyTextPrefix": "Hina Founded by Hameed EN اردو سنڌي New chat No conversations ye",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

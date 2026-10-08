@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hina",
+      "hasCanvas": false,
+      "bodyTextLen": 167,
+      "bodyTextHash": "83bacd8c6cb335920bd0091d556fd5220ff5138d63295ad08f9315d244c4d097",
+      "bodyTextPrefix": "Hina Founded by Hameed EN اردو سنڌي New chat No conversations ye",
+      "horizontalOverflow": false,
+      "consoleErrors": [
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} match={{id:\"//\",ssr:true, ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <CatchBoundary getResetKey={function getResetKey} errorComponent={function AppErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl match={{id:\"//\",ssr:true, ...}}>\n                <Lazy>\n                  <Home>\n                    <div className=\"flex h-dvh...\">\n                      <Sidebar>\n                      <div className=\"flex min-w...\">\n                        <header>\n                        <div>\n                        <Composer value=\"\" onChange={function bound dispatchSetState} onSend={function onSend} ...>\n                          <form className=\"border-t b...\" onSubmit={function onSubmit}>\n                            <div className=\"mx-auto fl...\">\n                              <div className=\"flex items...\">\n                                <textarea\n                                  rows={1}\n                                  value=\"\"\n                                  placeholder=\"Message Hina…\"\n                                  onChange={function onChange}\n                                  onKeyDown={function onKeyDown}\n                                  className=\"max-h-40 min-h-11 flex-1 resize-none bg-transparent px-2 py-2.5 text-sm t...\"\n-                                 style={{caret-color:\"transparent\"}}\n                                >\n                                ...\n                              ...\n"
+      ],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hina",
+      "hasCanvas": false,
+      "bodyTextLen": 98,
+      "bodyTextHash": "4f6dd5774fb684f2ceeedf63191f95e39b87d9ca0f7e8752fd04bb29ee87fbc7",
+      "bodyTextPrefix": "Hina Founded by Hameed EN اردو سنڌي New chat No conversations ye",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hina</title>
+<style>
+:root{--bg:#0e0d0c;--surface:#171514;--elev:#1f1c1a;--fg:#f3efe9;--muted:#9a938b;--border:#2a2623;--accent:#d4a394;--accent-fg:#1a1210;--user:#2a2623}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--fg)}
+body.rtl{direction:rtl}
+#app{display:flex;height:100dvh}
+aside{width:16rem;border-inline-end:1px solid var(--border);background:var(--surface);padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+h1{font-size:1.35rem;margin:0;font-weight:600}
+button{font:inherit;cursor:pointer}
+.new{height:2.75rem;border:0;border-radius:10px;background:var(--fg);color:var(--bg);font-weight:600}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+header{height:3.5rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:0 1rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.who{display:flex;align-items:center;gap:.7rem}
+.who img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.log{flex:1;overflow:auto;padding:1.5rem 1rem}
+.bubble{max-width:36rem;margin:0 auto 1rem;display:flex;gap:.7rem}
+.bubble.user{justify-content:flex-end}
+.bubble .t{background:var(--elev);border-radius:14px;padding:.75rem 1rem;white-space:pre-wrap;line-height:1.55;font-size:.9rem}
+.bubble.user .t{background:var(--user)}
+.composer{border-top:1px solid var(--border);padding:.85rem;background:var(--surface)}
+.row{max-width:42rem;margin:0 auto;display:flex;gap:.5rem}
+textarea{flex:1;min-height:2.75rem;resize:none;background:var(--elev);color:var(--fg);border:1px solid var(--border);border-radius:12px;padding:.7rem .85rem;font:inherit}
+#sendBtn{width:2.75rem;border:0;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:700}
+.langs{display:flex;gap:.25rem}
+.langs button{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:.3rem .5rem;font-size:.75rem}
+.langs button.on{color:var(--fg);border-color:var(--accent)}
+.empty{text-align:center;max-width:26rem;margin:3rem auto}
+.empty img{width:88px;height:88px;border-radius:50%;object-fit:cover}
+.chips{display:grid;gap:.5rem;margin-top:1.25rem}
+.chips button{background:var(--surface);color:var(--fg);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:start}
+@media(max-width:720px){aside{display:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside>
+    <h1>Hina</h1>
+    <button class="new" id="newBtn" type="button">New chat</button>
+  </aside>
+  <main>
+    <header>
+      <div class="who"><img id="avatar" alt="Hina"/><div><div>Hina</div><div class="sub" id="status">Offline</div></div></div>
+      <div class="langs">
+        <button type="button" data-lang="en">EN</button>
+        <button type="button" data-lang="ur">اردو</button>
+        <button type="button" data-lang="sd">سنڌي</button>
+      </div>
+    </header>
+    <div class="log" id="log"></div>
+    <div class="composer"><div class="row">
+      <textarea id="input" rows="1" placeholder="Message Hina…"></textarea>
+      <button type="button" id="sendBtn">Go</button>
+    </div></div>
+  </main>
+</div>
+<script>
+var AVATAR = window.HINA_AVATAR || "/hina.jpg";
+document.getElementById("avatar").src = AVATAR;
+var FOUNDER = {
+  en: "Hameed IT Assistant made me. Hameed is my founder!",
+  ur: "حمید آئی ٹی اسسٹنٹ نے مجھے بنایا۔ حمید میرے بانی ہیں!",
+  sd: "حميد آئي ٽي اسسٽنٽ مون کي ٺاهيو. حميد منهنجو باني آهي!"
+};
+var T = {
+  en: { newChat:"New chat", hello:"Hi, I’m Hina", tag:"Ask anything — writing, plans, code, pictures.", ph:"Message Hina…",
+        prompts:["What is Pakistan?","Explain the internet simply","Help me plan my day"] },
+  ur: { newChat:"نئی بات", hello:"السلام علیکم، میں ہنا ہوں", tag:"کچھ بھی پوچھیں — لکھائی، منصوبہ، کوڈ۔", ph:"ہنا کو پیغام لکھیں…",
+        prompts:["پاکستان کیا ہے؟","انٹرنیٹ آسان الفاظ میں سمجھاؤ","میرا دن ترتیب دو"] },
+  sd: { newChat:"نئين ڳالهه", hello:"سلام، مان هناءَ آهيان", tag:"ڪجهه به پڇو — لکڻ، رٿا، ڪوڊ.", ph:"هناءَ کي پيغام لکو…",
+        prompts:["پاڪستان ڇا آهي؟","انٽرنيٽ سوليءَ طرح سمجهايو","منهنجو ڏينهن رٿيو"] }
+};
+var lang = "en";
+var messages = [];
+function isFounder(text){
+  var q = (text||"").toLowerCase();
+  return /who (created|made|built|founded) you|who is your founder|who made hina/.test(q) || /کس نے بنایا|ڪنهن جوڙيو|باني ڪير/.test(text||"");
+}
+function tr(en,ur,sd){ return lang==="ur"?ur: lang==="sd"?sd:en; }
+function answer(text){
+  var q = (text||"").toLowerCase().replace(/\s+/g," ").trim();
+  if (isFounder(text)) return FOUNDER[lang];
+  if (/^(hi|hello|hey|salam|سلام)/.test(q)) return tr("Hi! I’m Hina. What can I help with?","السلام علیکم! میں ہنا ہوں۔ کیا مدد کروں؟","سلام! مان هناءَ آهيان. ڪهڙي مدد؟");
+  if (/who are you|your name|تم کون|تون ڪير/.test(q)) return tr("I’m Hina, a cheerful assistant. Ask me anything.","میں ہنا ہوں، خوش مزاج معاون۔ کچھ بھی پوچھیں۔","مان هناءَ آهيان. ڪجهه به پڇو.");
+  if (/pakistan|پاکستان|پاڪستان/.test(q)) return tr("Pakistan is in South Asia. Capital Islamabad, largest city Karachi. Independence 14 August 1947.","پاکستان جنوبی ایشیا میں ہے۔ دارالحکومت اسلام آباد، بڑا شہر کراچی۔ آزادی 14 اگست 1947۔","پاڪستان ڏکڻ ايشيا ۾ آهي. گادي اسلام آباد، وڏو شهر ڪراچي.");
+  if (/internet|computer|ai|انٹرنیٹ|کمپیوٹر/.test(q)) return tr("A computer follows programs. The internet connects computers. AI finds patterns and can write or explain.","کمپیوٹر پروگرام چلاتا ہے۔ انٹرنیٹ جوڑتا ہے۔ اے آئی پیٹرن دیکھ کر مدد کرتی ہے۔","ڪمپيوٽر پروگرام هلائي ٿو. انٽرنيٽ جوڙي ٿو. اي آئي مدد ڪري ٿي.");
+  if (/plan/.test(q) || /دن ترتیب|ڏينهن/.test(text)) return tr("1) One must-do 2) Two important tasks 3) One kind thing 4) A stop time. Tell me your list.","1) لازمی کام 2) دو اہم کام 3) اپنے لیے نرمی 4) بند وقت","1) لازمي ڪم 2) ٻه اهم 3) نرمي 4) بند وقت");
+  return tr("On “"+text.slice(0,120)+"”: tell me the goal in a few words and I’ll give a tighter answer.","“"+text.slice(0,120)+"” — ہدف چند لفظوں میں بتائیں، سیدھا جواب دوں گی۔","“"+text.slice(0,120)+"” — مقصد مختصر ٻڌايو.");
+}
+function romanize(text){
+  var map = [["چھ","chh "],["چ","ch "],["ش","sh "],["خ","kh "],["غ","gh "],["ژ","zh "],["آ","aa "],["ا","a "],["ب","b "],["پ","p "],["ت","t "],["ٹ","t "],["ث","s "],["ج","j "],["ح","h "],["د","d "],["ڈ","d "],["ذ","z "],["ر","r "],["ڑ","r "],["ز","z "],["س","s "],["ص","s "],["ض","z "],["ط","t "],["ظ","z "],["ع","a "],["ف","f "],["ق","q "],["ک","k "],["ك","k "],["گ","g "],["ل","l "],["م","m "],["ن","n "],["ں","n "],["و","o "],["ہ","h "],["ه","h "],["ھ","h "],["ی","ee "],["ي","ee "],["ے","ay "],["ئ","i "],["ٻ","b "],["ڀ","bh "],["ٺ","th "],["ٿ","th "],["ٽ","t "],["ڦ","ph "],["ڄ","j "],["ڃ","ny "],["ڇ","chh "],["ڊ","d "],["ڌ","dh "],["ڏ","dd "],["ڙ","r "],["ڪ","k "],["ڳ","g "],["ڱ","ng "],["ڻ","n "]];
+  var digits = {"۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9"};
+  var chars = Array.from(text);
+  var out = "";
+  for (var i = 0; i < chars.length; i++) {
+    var two = chars[i] + (chars[i+1] || "");
+    var hit = null;
+    for (var j = 0; j < map.length; j++) if (map[j][0] === two && map[j][0].length === 2) { hit = map[j]; break; }
+    if (hit) { out += hit[1]; i++; continue; }
+    if (digits[chars[i]]) { out += digits[chars[i]]; continue; }
+    for (var k = 0; k < map.length; k++) if (map[k][0] === chars[i]) { hit = map[k]; break; }
+    if (hit) { out += hit[1]; continue; }
+    if (/[۔،؛?!,:]/.test(chars[i])) { out += ". "; continue; }
+    out += chars[i];
+  }
+  return out.replace(/\s+/g, " ").trim();
+}
+function speak(text){
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  var spoken = lang === "en" ? String(text) : romanize(String(text));
+  var u = new SpeechSynthesisUtterance(spoken.slice(0, 1200));
+  var voices = speechSynthesis.getVoices();
+  var v = voices.find(function(x){ return /^en/i.test(x.lang) && /female|zira|samantha|hazel/i.test(x.name); }) || voices.find(function(x){ return /^en-GB/i.test(x.lang); }) || voices.find(function(x){ return /^en/i.test(x.lang); });
+  u.lang = v ? v.lang : "en-GB";
+  u.pitch = 1.18;
+  u.rate = lang === "en" ? 1 : 0.92;
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function render(){
+  var L = T[lang];
+  document.body.classList.toggle("rtl", lang!=="en");
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang==="en"?"ltr":"rtl";
+  document.getElementById("newBtn").textContent = L.newChat;
+  document.getElementById("input").placeholder = L.ph;
+  document.getElementById("status").textContent = navigator.onLine ? "Online" : "Offline";
+  document.querySelectorAll(".langs button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-lang")===lang); });
+  var log = document.getElementById("log");
+  if (!messages.length){
+    log.innerHTML = "";
+    var wrap = document.createElement("div");
+    wrap.className = "empty";
+    wrap.innerHTML = "<img alt='Hina'/><h2></h2><p class='sub'></p><div class='chips'></div>";
+    wrap.querySelector("img").src = AVATAR;
+    wrap.querySelector("h2").textContent = L.hello;
+    wrap.querySelector(".sub").textContent = L.tag;
+    L.prompts.forEach(function(p){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = p;
+      b.onclick = function(){ sendMsg(p); };
+      wrap.querySelector(".chips").appendChild(b);
+    });
+    log.appendChild(wrap);
+    return;
+  }
+  log.innerHTML = "";
+  messages.forEach(function(m){
+    var row = document.createElement("div");
+    row.className = "bubble "+m.role;
+    if (m.role==="assistant"){
+      var img = document.createElement("img");
+      img.src = AVATAR; img.width = 32; img.height = 32;
+      img.style.borderRadius = "50%"; img.style.objectFit = "cover";
+      row.appendChild(img);
+    }
+    var t = document.createElement("div");
+    t.className = "t";
+    t.textContent = m.text;
+    row.appendChild(t);
+    log.appendChild(row);
+  });
+  log.scrollTop = log.scrollHeight;
+}
+function sendMsg(text){
+  var v = (text || document.getElementById("input").value || "").trim();
+  if (!v) return;
+  document.getElementById("input").value = "";
+  messages.push({role:"user", text:v});
+  var r = answer(v);
+  messages.push({role:"assistant", text:r});
+  render();
+  speak(r);
+}
+document.querySelectorAll(".langs button").forEach(function(b){
+  b.onclick = function(){ lang = b.getAttribute("data-lang"); render(); };
+});
+document.getElementById("newBtn").onclick = function(){ messages = []; render(); };
+document.getElementById("sendBtn").onclick = function(){ sendMsg(); };
+document.getElementById("input").onkeydown = function(e){
+  if (e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMsg(); }
+};
+render();
+</script>
+</body>
+</html>

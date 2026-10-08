@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Hina</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <div>
+      <h1>Hina</h1>
+      <div class="sub" id="founded">Founded by Hameed</div>
+    </div>
+    <div class="langs">
+      <button type="button" data-lang="en" class="on">EN</button>
+      <button type="button" data-lang="ur">اردو</button>
+      <button type="button" data-lang="sd">سنڌي</button>
+    </div>
+    <button class="new" id="newchat" type="button">New chat</button>
+    <p class="note">Girl · free chat · works offline</p>
+    <div class="foot">
+      <button type="button" id="photobtn">Photos</button>
+      <button type="button" id="videobtn">Videos</button>
+    </div>
+  </aside>
+  <main>
+    <header>
+      <div class="who">
+        <img src="img/hina.jpg" alt="Hina"/>
+        <div>
+          <div>Hina</div>
+          <div class="sub" id="statusline">Female voice · free</div>
+        </div>
+      </div>
+      <button class="icon" id="mutebtn" type="button">Voice</button>
+    </header>
+    <div class="log" id="log"></div>
+    <div class="composer">
+      <div class="row">
+        <textarea id="input" rows="1" placeholder="Message Hina…"></textarea>
+        <button class="pic" id="imgbtn" type="button" title="Photos">Pic</button>
+        <button class="pic" id="clipbtn" type="button" title="Videos">Vid</button>
+        <button class="send" id="sendbtn" type="button">Go</button>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="js/hina.js"></script>
+</body>
+</html>
