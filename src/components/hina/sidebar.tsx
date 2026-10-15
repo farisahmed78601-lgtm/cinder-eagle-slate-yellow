@@ -32,9 +32,10 @@ export function Sidebar({
       />
       <aside
         className={cn(
-          "fixed inset-y-0 z-40 flex w-[min(18.5rem,88vw)] flex-col border-border bg-surface md:static md:z-0 md:w-72",
-          lang === "en" ? "left-0 border-r" : "right-0 border-l",
-          open ? "translate-x-0" : lang === "en" ? "-translate-x-full md:translate-x-0" : "translate-x-full md:translate-x-0",
+          "flex h-full w-72 shrink-0 flex-col border-border bg-surface",
+          "max-md:fixed max-md:inset-y-0 max-md:z-40 max-md:w-[min(18.5rem,88vw)]",
+          lang === "en" ? "border-r max-md:left-0" : "border-l max-md:right-0",
+          open ? "max-md:translate-x-0" : lang === "en" ? "max-md:-translate-x-full" : "max-md:translate-x-full",
         )}
       >
         <div className="flex items-center justify-between gap-2 px-4 pt-5 pb-3">

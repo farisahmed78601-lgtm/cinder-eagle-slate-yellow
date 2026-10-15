@@ -17,6 +17,9 @@ export const t = {
     thinking: "Hina is thinking…",
     filming: "Hina is making a video…",
     listen: "Listen",
+    talk: "Talk",
+    listening: "Listening…",
+    mic: "Allow the microphone in the browser, then tap Talk again.",
     hello: "Hi, I’m Hina",
     tagline: "Ask anything — writing, plans, code, pictures, and clips.",
     prompts: [
@@ -51,6 +54,9 @@ export const t = {
     thinking: "ہنا سوچ رہی ہے…",
     filming: "ہنا ویڈیو بنا رہی ہے…",
     listen: "سنیں",
+    talk: "بات کرو",
+    listening: "سن رہی ہوں…",
+    mic: "براؤزر میں مائیکروفون کی اجازت دیں، پھر بات کرو دبائیں۔",
     hello: "السلام علیکم، میں ہنا ہوں",
     tagline: "کچھ بھی پوچھیں — لکھائی، منصوبہ، کوڈ، تصاویر اور کلپس۔",
     prompts: [
@@ -85,6 +91,9 @@ export const t = {
     thinking: "هناءَ سوچي رهي آهي…",
     filming: "هناءَ وڊيو ٺاهي رهي آهي…",
     listen: "ٻڌو",
+    talk: "ڳالهايو",
+    listening: "ٻڌي رهي…",
+    mic: "براؤزر ۾ مائڪروفون جي اجازت ڏيو، پوءِ ڳالهايو دٻايو.",
     hello: "سلام، مان هناءَ آهيان",
     tagline: "ڪجهه به پڇو — لکڻ، رٿا، ڪوڊ، تصويرون ۽ ڪلپس.",
     prompts: [

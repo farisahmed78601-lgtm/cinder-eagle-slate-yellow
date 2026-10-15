@@ -15,6 +15,8 @@ export type LiveConfig = {
   voiceOn: boolean;
   photos: boolean;
   video: boolean;
+  speaker: "clear" | "female" | "male";
+  rate: "slow" | "normal" | "fast";
   facts: HinaFact[];
 };
 
@@ -36,6 +38,8 @@ export const DEFAULT_LIVE: LiveConfig = {
   voiceOn: true,
   photos: true,
   video: true,
+  speaker: "clear",
+  rate: "normal",
   facts: [],
 };
 
@@ -52,6 +56,8 @@ export function loadLive(): LiveConfig {
       tagline: { ...DEFAULT_LIVE.tagline, ...parsed.tagline },
       photos: parsed.photos !== false,
       video: parsed.video !== false,
+      speaker: parsed.speaker === "male" || parsed.speaker === "female" || parsed.speaker === "clear" ? parsed.speaker : "clear",
+      rate: parsed.rate === "slow" || parsed.rate === "fast" ? parsed.rate : "normal",
       facts: Array.isArray(parsed.facts) ? parsed.facts : [],
     };
   } catch {

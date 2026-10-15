@@ -115,6 +115,96 @@ const BUILT_IN: { test: RegExp; en: string; ur: string; sd: string }[] = [
     ur: "سندھی سندھ کی زبان ہے۔ یہ عربی فارسی رسم الخط میں لکھی جاتی ہے، اور سندھی آوازوں کے لیے اضافی حروف ہیں۔",
     sd: "سنڌي سنڌ جي ٻولي آهي. عربي فارسي رسم الخط ۾ لکجي ٿي، ۽ سنڌي آوازن لاءِ وڌيڪ اکر آهن.",
   },
+  {
+    test: /hyderabad|حیدرآباد|حيدرآباد/,
+    en: "Hyderabad is a historic city in Sindh, on the Indus. It was a capital of Sindh before Karachi grew. The old fort and the wind-catchers are part of the city.",
+    ur: "حیدرآباد سندھ کا تاریخی شہر ہے، دریائے سندھ کے کنارے۔ کراچی بڑھنے سے پہلے یہ سندھ کا دارالحکومت رہا۔ پرانا قلعہ اور ہوا گیر شہر کی پہچان ہیں۔",
+    sd: "حيدرآباد سنڌ جو تاريخي شهر آهي، سنڌو ڪناري. ڪراچي وڌڻ کان اڳ هي سنڌ جي گادي رهيو. پراڻو قلعو ۽ هوائگير شهر جي سڃاڻپ آهن.",
+  },
+  {
+    test: /islamabad|اسلام آباد|اسلاماباد/,
+    en: "Islamabad is the capital of Pakistan, in the north, next to the Margalla Hills. It became the capital in the 1960s. Government offices and the parliament are here.",
+    ur: "اسلام آباد پاکستان کا دارالحکومت ہے، شمال میں مارگلہ پہاڑیوں کے پاس۔ یہ 1960 کی دہائی میں دارالحکومت بنا۔ حکومتی دفاتر اور پارلیمان یہاں ہیں۔",
+    sd: "اسلام آباد پاڪستان جي گادي آهي، اتر ۾ مارگلا ٽڪرين ڀرسان. 1960 واري ڏهاڪي ۾ گادي بڻيو. سرڪاري دفتر ۽ پارليامينٽ هتي آهن.",
+  },
+  {
+    test: /lahore|لاہور|لاهور/,
+    en: "Lahore is the capital of Punjab and one of the oldest cities in the region. The Badshahi Mosque, Lahore Fort, and the old walled city are well known.",
+    ur: "لاہور پنجاب کا دارالحکومت اور خطے کے قدیم شہروں میں سے ہے۔ بادشاہی مسجد، قلعہ لاہور اور پرانا شہر مشہور ہیں۔",
+    sd: "لاهور پنجاب جي گادي ۽ پراڻن شهرن مان هڪ آهي. بادشاهي مسجد، قلعو ۽ پراڻو شهر مشهور آهن.",
+  },
+  {
+    test: /mohenjo|موئن جو|موهن جو|harappa|ہڑپہ/,
+    en: "Mohenjo-daro is an ancient city in Sindh, part of the Indus Valley civilisation, about 4,500 years old. Its streets were planned, and it had wells and a great bath.",
+    ur: "موئن جو دڑو سندھ کا قدیم شہر ہے، وادیٔ سندھ کی تہذیب کا حصہ، تقریباً ساڑھے چار ہزار سال پرانا۔ سڑکیں منصوبے سے بنی تھیں، کنویں اور ایک بڑا غسل خانہ تھا۔",
+    sd: "موهن جو دڙو سنڌ جو قديم شهر آهي، سنڌو تهذيب جو حصو، لڳ ڀڳ ساڍا چار هزار سال پراڻو. رستا رٿيل هئا، کوهه ۽ وڏو وهنجڻ جو هنڌ هو.",
+  },
+  {
+    test: /latif|لطیف|لطيف|شاهه عبد/,
+    en: "Shah Abdul Latif Bhittai was a Sindhi poet and mystic. His poetry is collected in the Shah Jo Risalo. People still sing his verses at his shrine in Bhit Shah.",
+    ur: "شاہ عبداللطیف بھٹائی سندھی شاعر اور صوفی تھے۔ ان کی شاعری شاہ جو رسالو میں ہے۔ بھٹ شاہ کی درگاہ پر آج بھی ان کے بیت گائے جاتے ہیں۔",
+    sd: "شاهه عبداللطيف ڀٽائي سنڌي شاعر ۽ صوفي هو. سندس شاعري شاهه جو رسالو ۾ آهي. ڀٽ شاهه تي اڄ به بيت ڳايا وڃن ٿا.",
+  },
+  {
+    test: /cricket|کرکٹ|ڪرڪيٽ/,
+    en: "Cricket is Pakistan’s most followed sport. A match has two teams, bats, a ball, and wickets. One side bats while the other bowls and fields. A Test can last five days; a T20 is much shorter.",
+    ur: "کرکٹ پاکستان کا سب سے مقبول کھیل ہے۔ دو ٹیمیں، بلے، گیند اور وکٹیں۔ ایک طرف بیٹنگ کرتی ہے، دوسری گیند بازی اور فیلڈنگ۔ ٹیسٹ پانچ دن چل سکتا ہے، ٹی ٹوئنٹی چھوٹا ہوتا ہے۔",
+    sd: "ڪرڪيٽ پاڪستان جو سڀ کان وڌيڪ ڏٺل راند آهي. ٻه ٽيمون، ڪاٺيون، بال ۽ وڪيٽون. هڪ پاسي بيٽنگ، ٻيو بالنگ. ٽيسٽ پنج ڏينهن، ٽي 20 ننڍو.",
+  },
+  {
+    test: /tea|chai|چائے|چانهه|چانھ/,
+    en: "A simple cup of tea: boil water, add tea leaves, a little milk if you like, and sugar to taste. Let it simmer a minute, then strain it.",
+    ur: "سادہ چائے: پانی ابالیں، چائے کی پتی ڈالیں، چاہیں تو تھوڑا دودھ، اور حسبِ ذائقہ چینی۔ ایک منٹ پکنے دیں، پھر چھان لیں۔",
+    sd: "سادي چانهه: پاڻي اٻاريو، چانهه وجهو، چاهيو ته ٿورو کير، ۽ کنڊ ذائقي مطابق. هڪ منٽ پچڻ ڏيو، پوءِ ڇاڻيو.",
+  },
+  {
+    test: /fever|بخار|بخار/,
+    en: "A fever means the body is warmer than usual, often while fighting an infection. Rest, drink water, and if it stays high, is with a rash, or the person is very weak, see a doctor. I am not a doctor.",
+    ur: "بخار کا مطلب جسم معمول سے گرم ہے، اکثر انفیکشن سے لڑتے ہوئے۔ آرام کریں، پانی پیئیں، اور اگر بخار تیز رہے، دانے ہوں، یا کمزوری بہت ہو تو ڈاکٹر کو دکھائیں۔ میں ڈاکٹر نہیں ہوں۔",
+    sd: "بخار جو مطلب جسم معمول کان وڌيڪ گرم آهي، اڪثر انفيڪشن سان. آرام ڪريو، پاڻي پيو، ۽ جي بخار تيز رهي يا ڪمزوري گهڻي هجي ته ڊاڪٽر وٽ وڃو. مان ڊاڪٽر نه آهيان.",
+  },
+  {
+    test: /school|اسکول|سکول|اسڪول/,
+    en: "School is where children learn reading, writing, numbers, and how to work with other people. A good day there is: listen, ask when you don’t understand, and finish one small piece of homework before play.",
+    ur: "سکول وہ جگہ ہے جہاں بچے پڑھنا، لکھنا، اعداد اور مل جل کر کام کرنا سیکھتے ہیں۔ اچھا دن: غور سے سنیں، نہ سمجھ آئے تو پوچھیں، اور کھیل سے پہلے ایک چھوٹا کام ختم کر لیں۔",
+    sd: "اسڪول اهو هنڌ آهي جتي ٻار پڙهڻ، لکڻ، انگ ۽ گڏجي ڪم ڪرڻ سکن ٿا. سٺو ڏينهن: ڌيان سان ٻڌو، نه سمجهه پوي ته پڇو، ۽ راند کان اڳ هڪ ننڍو ڪم پورو ڪريو.",
+  },
+  {
+    test: /oxygen|آکسیجن|آڪسيجن/,
+    en: "Oxygen is the gas in air that we need to breathe. It is about one fifth of the air. Plants release oxygen when they make food in sunlight.",
+    ur: "آکسیجن وہ گیس ہے جو سانس کے لیے چاہیے۔ ہوا کا تقریباً پانچواں حصہ آکسیجن ہے۔ پودے دھوپ میں خوراک بناتے وقت آکسیجن چھوڑتے ہیں۔",
+    sd: "آڪسيجن اها گئس آهي جيڪا ساهه لاءِ گهرجي. هوا جو لڳ ڀڳ پنجون حصو آڪسيجن آهي. ٻوٽا سج ۾ کاڌو ٺاهيندي آڪسيجن ڇڏين ٿا.",
+  },
+  {
+    test: /moon|چاند|چنڊ/,
+    en: "The Moon is Earth’s companion in space. It does not make its own light; we see sunlight bouncing off it. It takes about a month to go around Earth, which is why its shape in the sky changes.",
+    ur: "چاند زمین کا ساتھی ہے۔ اس کی اپنی روشنی نہیں؛ ہم سورج کی روشنی دیکھتے ہیں جو اس سے ٹکرا کر آتی ہے۔ زمین کا چکر تقریباً ایک مہینے میں پورا ہوتا ہے، اس لیے اس کی شکل بدلتی رہتی ہے۔",
+    sd: "چنڊ زمين جو ساٿي آهي. ان جي پنهنجي روشني نه آهي. اسان سج جي روشني ڏسون ٿا جيڪا ان تان اچي ٿي. زمين جو چڪر لڳ ڀڳ هڪ مهيني ۾، ان ڪري شڪل بدلجي ٿي.",
+  },
+  {
+    test: /democracy|جمہوریت|جمہوريت|جمهوريت/,
+    en: "Democracy means people choose their leaders by voting. Leaders are meant to follow laws, and people can disagree in public without being punished for the opinion itself.",
+    ur: "جمہوریت کا مطلب ہے لوگ ووٹ سے اپنے لیڈر چنتے ہیں۔ لیڈر قانون کے پابند ہوتے ہیں، اور لوگ اپنی رائے کھل کر رکھ سکتے ہیں۔",
+    sd: "جمهوريت جو مطلب آهي ماڻهو ووٽ سان اڳواڻ چونڊين. اڳواڻ قانون جا پابند هجن، ۽ ماڻهو پنهنجي راءِ کليل رکن.",
+  },
+  {
+    test: /earthquake|زلزلہ|زلزلو|زلزل/,
+    en: "An earthquake is a sudden shake of the ground when rock underground breaks and moves. If you feel one: drop, cover your head under a table, and hold on. Stay away from windows.",
+    ur: "زلزلہ زمین کا اچانک ہلنا ہے جب نیچے چٹان ٹوٹ کر سرکتی ہے۔ محسوس ہو تو: جھکیں، میز کے نیچے سر ڈھانپیں، اور پکڑے رہیں۔ کھڑکیوں سے دور رہیں۔",
+    sd: "زلزلو زمين جو اوچتو هلڻ آهي جڏهن هيٺ پٿر ٽٽي چري. محسوس ٿئي ته: جهڪو، ميز هيٺان مٿو ڍڪيو، ۽ پڪڙيو رهو. درين کان پري رهو.",
+  },
+  {
+    test: /rupee|روپیہ|روپيو|money|پیسے|پيسا/,
+    en: "The rupee is Pakistan’s money. Prices are what people agree to pay. Saving a little regularly is safer than spending every rupee the day it arrives.",
+    ur: "روپیہ پاکستان کی کرنسی ہے۔ قیمت وہ ہے جو لوگ دینے پر راضی ہوں۔ تھوڑی بچت باقاعدگی سے، ہر روپیہ اسی دن خرچ کرنے سے زیادہ محفوظ ہے۔",
+    sd: "روپيو پاڪستان جي سڪو آهي. قيمت اها آهي جيڪا ماڻهو ڏيڻ تي راضي هجن. ٿوري بچت باقاعده، هر روپيو ساڳئي ڏينهن خرچ ڪرڻ کان وڌيڪ محفوظ آهي.",
+  },
+  {
+    test: /javascript|جاوا اسکرپٹ|جاوا اسڪرپٽ|css|سی ایس ایس/,
+    en: "CSS sets how a page looks: color, size, and space. JavaScript makes the page react, for example showing a message when a button is pressed. HTML is the words and structure; CSS is the look; JavaScript is the behavior.",
+    ur: "سی ایس ایس صفحے کی شکل بتاتا ہے: رنگ، سائز اور جگہ۔ جاوا اسکرپٹ صفحے کو ردِعمل دیتی ہے، جیسے بٹن دبانے پر پیغام۔ ایچ ٹی ایم ایل الفاظ اور ڈھانچہ ہے، سی ایس ایس شکل، جاوا اسکرپٹ کام۔",
+    sd: "سي ايس ايس صفحي جي شڪل ٻڌائي ٿو: رنگ، ماپ ۽ جاءِ. جاوا اسڪرپٽ صفحي کي ردِعمل ڏئي ٿي، جيئن بٽڻ تي پيغام. ايڇ ٽي ايم ايل لفظ ۽ ڍانچو، سي ايس ايس شڪل، جاوا اسڪرپٽ ڪم.",
+  },
 ];
 
 function customFact(q: string, lang: Lang): string | null {
@@ -143,7 +233,7 @@ export function knowledgeReply(userText: string, lang: Lang): string {
 
   const math = safeMath(userText);
   if (math !== null) {
-    return tr(lang, `That’s ${math}.`, `جواب: ${math}`, `جواب: ${math}`);
+    return tr(lang, `That’s ${math}.`, `جواب ${math} ہے۔`, `جواب ${math} آهي.`);
   }
 
   const extra = customFact(q, lang);
@@ -155,18 +245,18 @@ export function knowledgeReply(userText: string, lang: Lang): string {
   if (/^(hi|hello|hey|yo|salam|salaam|سلام|السلام)/.test(q) || q.includes("how are you")) {
     return tr(
       lang,
-      "Hi! I’m Hina. What would you like help with?",
-      "السلام علیکم! میں ہنا ہوں۔ کس بات میں مدد کروں؟",
-      "سلام! مان هناءَ آهيان. ڪهڙي مدد گهرجي؟",
+      "Hi, I’m Hina. I’m glad you’re here. What would you like to talk about?",
+      "السلام علیکم، میں ہنا ہوں۔ خوشی ہوئی۔ کس بات پر بات کریں؟",
+      "سلام، مان هناءَ آهيان. خوشي ٿي. ڪهڙي ڳالهه ڪريون؟",
     );
   }
 
   if (/\b(who are you|what are you|your name)\b/.test(q) || /تم کون ہو|تون ڪير آهين|آپ کون ہیں/.test(userText)) {
     return tr(
       lang,
-      "I’m Hina, a cheerful assistant. I answer questions, write, plan, explain, and help with pictures or clips.",
-      "میں ہنا ہوں — خوش مزاج معاون۔ سوال، لکھائی، منصوبہ، وضاحت اور تصاویر میں مدد کرتی ہوں۔",
-      "مان هناءَ آهيان — خوش معاون. سوال، لکڻ، رٿا ۽ تصويرن ۾ مدد ڪريان ٿي.",
+      "I’m Hina. I like helping, and I’ll answer in a warm, clear way — questions, writing, plans, pictures, or clips.",
+      "میں ہنا ہوں۔ مدد کرنا اچھا لگتا ہے، اور نرم صاف جواب دیتی ہوں — سوال، لکھائی، منصوبہ، تصویر یا کلپ۔",
+      "مان هناءَ آهيان. مدد ڪرڻ پسند اٿم، ۽ نرم صاف جواب ڏيان ٿي.",
     );
   }
 
@@ -241,8 +331,8 @@ export function knowledgeReply(userText: string, lang: Lang): string {
 
   return tr(
     lang,
-    `On “${userText.slice(0, 160)}”: name the goal, what you already know, and the next step. Add a few details and I’ll answer more tightly.`,
-    `“${userText.slice(0, 160)}” پر: ہدف بتائیں، جو پہلے سے معلوم ہے، اور اگلا قدم۔ تھوڑی تفصیل دیں تو جواب مزید سیدھا ہو گا۔`,
-    `“${userText.slice(0, 160)}” تي: مقصد ٻڌايو، جيڪو اڳ ۾ ڄاڻو ٿا، ۽ ايندڙ قدم.`,
+    `I’d love to help with “${userText.slice(0, 140)}”. Tell me a little more — what you want, and I’ll answer properly.`,
+    `“${userText.slice(0, 140)}” پر خوشی سے مدد کروں گی۔ تھوڑا اور بتائیں، میں صاف جواب دوں گی۔`,
+    `“${userText.slice(0, 140)}” تي خوشيءَ سان مدد ڪندس. ٿورو وڌيڪ ٻڌايو، مان صاف جواب ڏيندس.`,
   );
 }

@@ -6,18 +6,18 @@ import { Composer } from "@/components/hina/composer";
 import { MessageBody } from "@/components/hina/markdown";
 import { Sidebar } from "@/components/hina/sidebar";
 import { generateHinaImage, generateHinaVideo } from "@/lib/hina/api";
-import { isRtl, t } from "@/lib/hina/i18n";
+import { t } from "@/lib/hina/i18n";
 import { localHinaReply } from "@/lib/hina/local";
 import { isGalleryRequest, pickGallery } from "@/lib/hina/gallery";
 import { isVideoMakeRequest } from "@/lib/hina/media";
 import { applyLive, loadLive, subscribeLive, type LiveConfig } from "@/lib/hina/live";
 import { useChatStore } from "@/lib/hina/store";
-import { speakLocal, stopSpeaking, warmVoices } from "@/lib/hina/voice";
+import { speakLocal, stopSpeaking, warmVoices, listenOnce, canListen } from "@/lib/hina/voice";
 import { cn } from "@/lib/cn";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({ component: () => <Home /> });
 
-function Home() {
+export function Home({ embed = false }: { embed?: boolean }) {
   const conversations = useChatStore((s) => s.conversations);
   const activeId = useChatStore((s) => s.activeId);
   const sending = useChatStore((s) => s.sending);
@@ -41,14 +41,21 @@ function Home() {
   const [busy, setBusy] = useState<"chat" | "video" | null>(null);
   const [live, setLive] = useState<LiveConfig>(() =>
     typeof window === "undefined"
-      ? { greeting: { en: "", ur: "", sd: "" }, tagline: { en: "", ur: "", sd: "" }, accent: "#d4a394", voiceOn: true, photos: true, video: true, facts: [] }
+      ? { greeting: { en: "", ur: "", sd: "" }, tagline: { en: "", ur: "", sd: "" }, accent: "#d4a394", voiceOn: true, photos: true, video: true, speaker: "clear" as const, rate: "normal" as const, facts: [] }
       : loadLive(),
   );
+  const [listening, setListening] = useState(false);
+  const [talking, setTalking] = useState(false);
+  const [micNote, setMicNote] = useState("");
   const scroller = useRef<HTMLDivElement>(null);
   const voiceOnRef = useRef(voiceOn);
   const langRef = useRef(lang);
+  const talkRef = useRef(false);
+  const stopMic = useRef<(() => void) | null>(null);
+  const sendingRef = useRef(sending);
   voiceOnRef.current = voiceOn;
   langRef.current = lang;
+  sendingRef.current = sending;
 
   const active = useMemo(
     () => conversations.find((c) => c.id === activeId) ?? conversations[0] ?? null,
@@ -84,6 +91,7 @@ function Home() {
       window.removeEventListener("online", on);
       window.removeEventListener("offline", on);
       stopSpeaking();
+      stopMic.current?.();
     };
   }, [setTheme, setLang, setVoiceOn]);
 
@@ -91,15 +99,68 @@ function Home() {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" });
   }, [messages.length, sending]);
 
-  function speakIfOn(text: string) {
-    if (voiceOnRef.current) speakLocal(text, langRef.current);
+  function armListen() {
+    if (!talkRef.current || !canListen()) return;
+    stopMic.current?.();
+    setListening(true);
+    stopMic.current = listenOnce(
+      langRef.current,
+      (said) => {
+        setListening(false);
+        stopMic.current = null;
+        void sendText(said);
+      },
+      (error) => {
+        setListening(false);
+        talkRef.current = false;
+        if (error) setMicNote(t[langRef.current].mic);
+      },
+    );
+  }
+
+  function onTalk() {
+    setMicNote("");
+    if (talkRef.current) {
+      talkRef.current = false;
+      stopMic.current?.();
+      stopMic.current = null;
+      setListening(false);
+      stopSpeaking();
+      return;
+    }
+    talkRef.current = true;
+    setVoiceOn(true);
+    voiceOnRef.current = true;
+    stopSpeaking();
+    if (!canListen()) {
+      talkRef.current = false;
+      setMicNote(t[langRef.current].mic);
+      return;
+    }
+    armListen();
+  }
+
+  async function speakIfOn(text: string) {
+    if (voiceOnRef.current || talkRef.current) {
+      setTalking(true);
+      try {
+        await speakLocal(text, langRef.current);
+      } finally {
+        setTalking(false);
+      }
+    }
+    sendingRef.current = false;
+    if (talkRef.current) armListen();
   }
 
   async function sendText(text: string) {
     const trimmed = text.trim();
-    if (!trimmed || sending) return;
+    if (!trimmed || sendingRef.current) return;
+    stopMic.current?.();
+    setListening(false);
     setDraft("");
     const { conversationId } = addUserMessage(trimmed);
+    sendingRef.current = true;
     setSending(true);
     setBusy("chat");
     try {
@@ -110,28 +171,29 @@ function Home() {
           addAssistantMessage(conversationId, t[langRef.current].videoMade(trimmed), [
             { kind: "video", url: result.url, alt: trimmed },
           ]);
-          speakIfOn(t[langRef.current].videoMade(trimmed));
+          await speakIfOn(t[langRef.current].videoMade(trimmed));
         } else {
           const pack = pickGallery(`${trimmed} video`, langRef.current);
           addAssistantMessage(conversationId, t[langRef.current].videoFail, pack.attachments.filter((a) => a.kind === "video"));
-          speakIfOn(t[langRef.current].videoFail);
+          await speakIfOn(t[langRef.current].videoFail);
         }
         return;
       }
       if (isGalleryRequest(trimmed)) {
         const pack = pickGallery(trimmed, langRef.current);
         addAssistantMessage(conversationId, pack.caption, pack.attachments);
-        speakIfOn(pack.caption);
+        await speakIfOn(pack.caption);
         return;
       }
       const reply = localHinaReply(trimmed, langRef.current);
       addAssistantMessage(conversationId, reply);
-      speakIfOn(reply);
+      await speakIfOn(reply);
     } catch {
       const reply = localHinaReply(trimmed, langRef.current);
       addAssistantMessage(conversationId, reply);
-      speakIfOn(reply);
+      await speakIfOn(reply);
     } finally {
+      sendingRef.current = false;
       setSending(false);
       setBusy(null);
     }
@@ -150,11 +212,11 @@ function Home() {
         addAssistantMessage(conversationId, caption, [
           { kind: "image", url: result.url, alt: result.prompt },
         ]);
-        speakIfOn(caption);
+        await speakIfOn(caption);
       } else {
         const pack = pickGallery(prompt, langRef.current);
         addAssistantMessage(conversationId, pack.caption, pack.attachments.filter((a) => a.kind === "image"));
-        speakIfOn(pack.caption);
+        await speakIfOn(pack.caption);
       }
     } finally {
       setSending(false);
@@ -175,10 +237,10 @@ function Home() {
         addAssistantMessage(conversationId, caption, [
           { kind: "video", url: result.url, alt: prompt },
         ]);
-        speakIfOn(caption);
+        await speakIfOn(caption);
       } else {
         addAssistantMessage(conversationId, t[langRef.current].videoFail);
-        speakIfOn(t[langRef.current].videoFail);
+        await speakIfOn(t[langRef.current].videoFail);
       }
     } finally {
       setSending(false);
@@ -187,14 +249,16 @@ function Home() {
   }
 
   return (
-    <div className={cn("flex h-dvh bg-bg text-fg", isRtl(lang) && "flex-row-reverse")}>
+    <div className="flex h-full min-h-0 overflow-hidden bg-bg text-fg">
+      {!embed && (
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onPhotos={() => void sendText("Show me your photos")}
       />
+      )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <header className="flex h-14 items-center justify-between gap-3 border-b border-border bg-surface px-3 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
             <button
@@ -202,15 +266,22 @@ function Home() {
               className="rounded-md p-2 text-muted md:hidden"
               onClick={() => setSidebarOpen(true)}
               aria-label={copy.openChats}
+              hidden={embed}
             >
               <Menu className="size-5" />
             </button>
-            <HinaAvatar size={36} />
+            <HinaAvatar size={36} talking={talking} />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">Hina</p>
               <p className="flex items-center gap-1 text-[11px] text-muted">
-                {online ? <Wifi className="size-3" /> : <WifiOff className="size-3" />}
-                {online ? copy.online : copy.offline}
+                {talking ? (
+                  lang === "ur" ? "مسکراتے ہوئے بول رہی ہوں" : lang === "sd" ? "مرڪندي ڳالهائي رهي آهيان" : "Talking with a smile"
+                ) : (
+                  <>
+                    {online ? <Wifi className="size-3" /> : <WifiOff className="size-3" />}
+                    {online ? copy.online : copy.offline}
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -246,12 +317,12 @@ function Home() {
             />
           ) : (
             <ol className="mx-auto flex max-w-3xl flex-col gap-5 px-4 py-8">
-              {messages.map((m) => (
+              {messages.map((m, i) => (
                 <li
                   key={m.id}
                   className={cn("flex gap-3", m.role === "user" ? "justify-end" : "justify-start")}
                 >
-                  {m.role === "assistant" && <HinaAvatar size={36} />}
+                  {m.role === "assistant" && <HinaAvatar size={36} talking={talking && i === messages.length - 1} />}
                   <div
                     className={cn(
                       "max-w-[min(100%,36rem)] rounded-xl px-4 py-3",
@@ -294,7 +365,10 @@ function Home() {
                       <button
                         type="button"
                         className="mt-2 inline-flex items-center gap-1 text-[11px] text-subtle hover:text-fg"
-                        onClick={() => speakLocal(m.content, lang)}
+                        onClick={() => {
+                          setTalking(true);
+                          void speakLocal(m.content, lang).finally(() => setTalking(false));
+                        }}
                       >
                         <Volume2 className="size-3.5" />
                         {copy.listen}
@@ -323,6 +397,9 @@ function Home() {
           lang={lang}
           showImage={live.photos}
           showVideo={live.video}
+          listening={listening}
+          onTalk={onTalk}
+          micNote={micNote}
         />
       </div>
     </div>

@@ -1,5 +1,6 @@
-import { ImagePlus, Send, Square, Video } from "lucide-react";
+import { ImagePlus, Mic, Send, Square, Video } from "lucide-react";
 import { t, type Lang } from "@/lib/hina/i18n";
+import { cn } from "@/lib/cn";
 
 export function Composer({
   value,
@@ -11,6 +12,9 @@ export function Composer({
   lang,
   showImage = true,
   showVideo = true,
+  listening = false,
+  onTalk,
+  micNote = "",
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -21,6 +25,9 @@ export function Composer({
   lang: Lang;
   showImage?: boolean;
   showVideo?: boolean;
+  listening?: boolean;
+  onTalk: () => void;
+  micNote?: string;
 }) {
   const copy = t[lang];
   return (
@@ -33,6 +40,18 @@ export function Composer({
     >
       <div className="mx-auto flex max-w-3xl flex-col gap-2">
         <div className="flex items-end gap-2 rounded-xl border border-border bg-elevated p-2">
+          <button
+            type="button"
+            onClick={onTalk}
+            className={cn(
+              "flex h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-sm font-medium",
+              listening ? "bg-accent text-accent-fg" : "bg-surface text-fg",
+            )}
+            aria-label={listening ? copy.listening : copy.talk}
+          >
+            <Mic className="size-5" />
+            <span>{listening ? copy.listening : copy.talk}</span>
+          </button>
           <textarea
             rows={1}
             value={value}
@@ -85,6 +104,7 @@ export function Composer({
           </button>
         </div>
         <p className="hidden px-1 text-[11px] text-subtle sm:block">{copy.hint}</p>
+        {micNote ? <p className="px-1 text-[11px] leading-snug break-words text-danger">{micNote}</p> : null}
       </div>
     </form>
   );

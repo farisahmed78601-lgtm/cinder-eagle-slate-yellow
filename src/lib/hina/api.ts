@@ -56,3 +56,164 @@ export const generateHinaVideo = createServerFn({ method: "POST" })
       return { ok: false as const, error: "fail" };
     }
   });
+
+const SINDHI_TO_URDU: [string, string][] = [
+  ["۾", " میں "],
+  ["۽", " اور "],
+  ["ٻ", "ب"],
+  ["ڀ", "بھ"],
+  ["ٺ", "ٹھ"],
+  ["ٿ", "تھ"],
+  ["ٽ", "ٹ"],
+  ["ڦ", "پھ"],
+  ["ڄ", "ج"],
+  ["ڃ", "ن"],
+  ["ڇ", "چھ"],
+  ["ڊ", "ڈ"],
+  ["ڌ", "دھ"],
+  ["ڏ", "د"],
+  ["ڙ", "ڑ"],
+  ["ڪ", "ک"],
+  ["ڳ", "گ"],
+  ["ڱ", "نگ"],
+  ["ڻ", "ن"],
+];
+
+/** Sindhi letters Google’s Urdu voice would skip, rewritten so the sentence is spoken. */
+function forUrduVoice(text: string, lang: Lang) {
+  let out = text.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "");
+  if (lang === "sd") {
+    for (const [from, to] of SINDHI_TO_URDU) out = out.split(from).join(to);
+  }
+  return out.replace(/\s+/g, " ").trim();
+}
+
+function speechChunks(text: string) {
+  const clean = text.replace(/\s+/g, " ").trim().slice(0, 700);
+  const sentences = clean.split(/(?<=[۔.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const out: string[] = [];
+  for (const sentence of sentences.length ? sentences : [clean]) {
+    if (sentence.length <= 140) {
+      out.push(sentence);
+      continue;
+    }
+    let rest = sentence;
+    while (rest.length > 140) {
+      let cut = rest.lastIndexOf(" ", 140);
+      if (cut < 30) cut = 140;
+      out.push(rest.slice(0, cut).trim());
+      rest = rest.slice(cut).trim();
+    }
+    if (rest) out.push(rest);
+  }
+  return out.slice(0, 5);
+}
+
+async function fetchUrduMp3(piece: string) {
+  const q = encodeURIComponent(piece);
+  const urls = [
+    `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ur&q=${q}`,
+    `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=ur&q=${q}`,
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        },
+      });
+      if (!res.ok) continue;
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.length < 200 || buf[0] === 0x3c) continue;
+      return buf;
+    } catch {
+      /* try the next host */
+    }
+  }
+  return null;
+}
+
+export const speakHinaAudio = createServerFn({ method: "POST" })
+  .validator((input: { text: string; lang: Lang }) => input)
+  .handler(async ({ data }) => {
+    if (data.lang === "en") return { ok: false as const };
+    const spoken = forUrduVoice(data.text, data.lang);
+    const parts: Buffer[] = [];
+    for (const piece of speechChunks(spoken)) {
+      const buf = await fetchUrduMp3(piece);
+      if (!buf) return { ok: false as const };
+      parts.push(buf);
+    }
+    if (!parts.length) return { ok: false as const };
+    return {
+      ok: true as const,
+      clips: parts.map((buf) => `data:audio/mpeg;base64,${buf.toString("base64")}`),
+    };
+  });
+
+const WIKI_PACK: { keys: string; en: string; ur: string; sd: string }[] = [
+  { keys: "pakistan, پاکستان, پاڪستان", en: "Pakistan", ur: "پاکستان", sd: "پاڪستان" },
+  { keys: "sindh, سندھ, سنڌ", en: "Sindh", ur: "سندھ", sd: "سنڌ" },
+  { keys: "karachi, کراچی, ڪراچي", en: "Karachi", ur: "کراچی", sd: "ڪراچي" },
+  { keys: "indus, سندھو, سنڌو", en: "Indus_River", ur: "دریائے_سندھ", sd: "سنڌو_درياءُ" },
+  { keys: "islamabad, اسلام آباد", en: "Islamabad", ur: "اسلام_آباد", sd: "اسلام_آباد" },
+  { keys: "lahore, لاہور, لاهور", en: "Lahore", ur: "لاہور", sd: "لاهور" },
+  { keys: "mohenjo, موئن, موهن", en: "Mohenjo-daro", ur: "موئن_جو_دڑو", sd: "موهن_جو_دڙو" },
+  { keys: "latif, لطیف, لطيف", en: "Shah_Abdul_Latif_Bhittai", ur: "شاہ_عبداللطیف_بھٹائی", sd: "شاهه_عبداللطيف_ڀٽائي" },
+  { keys: "cricket, کرکٹ, ڪرڪيٽ", en: "Cricket", ur: "کرکٹ", sd: "ڪرڪيٽ" },
+  { keys: "urdu, اردو", en: "Urdu", ur: "اردو", sd: "اردو_ٻولي" },
+  { keys: "sindhi, سنڌي, سندھی", en: "Sindhi_language", ur: "سندھی_زبان", sd: "سنڌي_ٻولي" },
+  { keys: "heart, دل, قلب", en: "Heart", ur: "قلب", sd: "دل" },
+  { keys: "hyderabad, حیدرآباد, حيدرآباد", en: "Hyderabad,_Sindh", ur: "حیدرآباد،_سندھ", sd: "حيدرآباد" },
+  { keys: "thatta, ٹھٹہ, ٺٽو", en: "Thatta", ur: "ٹھٹہ", sd: "ٺٽو" },
+  { keys: "sukkur, سکھر, سکر", en: "Sukkur", ur: "سکھر", sd: "سکر" },
+  { keys: "moon, چاند, چنڊ", en: "Moon", ur: "چاند", sd: "چنڊ" },
+  { keys: "sun, سورج, سج", en: "Sun", ur: "سورج", sd: "سج" },
+  { keys: "water, پانی, پاڻي", en: "Water", ur: "پانی", sd: "پاڻي" },
+  { keys: "school, سکول, اسڪول", en: "School", ur: "مدرسہ", sd: "اسڪول" },
+  { keys: "computer, کمپیوٹر, ڪمپيوٽر", en: "Computer", ur: "کمپیوٹر", sd: "ڪمپيوٽر" },
+  { keys: "internet, انٹرنیٹ, انٽرنيٽ", en: "Internet", ur: "انٹرنیٹ", sd: "انٽرنيٽ" },
+  { keys: "quran, قرآن", en: "Quran", ur: "قرآن", sd: "قرآن" },
+  { keys: "ramadan, رمضان", en: "Ramadan", ur: "رمضان", sd: "رمضان" },
+];
+
+export const WIKI_TOPIC_COUNT = WIKI_PACK.length;
+
+async function wikiExtract(host: string, title: string) {
+  const url = `https://${host}/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "HinaBot/1.0 (knowledge; educational)", Accept: "application/json" },
+    });
+    if (!res.ok) return "";
+    const data = (await res.json()) as { extract?: string };
+    return String(data.extract ?? "").replace(/\s+/g, " ").trim().slice(0, 420);
+  } catch {
+    return "";
+  }
+}
+
+export const fetchWikiFact = createServerFn({ method: "POST" })
+  .validator((input: { index: number }) => input)
+  .handler(async ({ data }) => {
+    const topic = WIKI_PACK[data.index];
+    if (!topic) return { ok: false as const, total: WIKI_PACK.length };
+    const [en, ur, sd] = await Promise.all([
+      wikiExtract("en.wikipedia.org", topic.en),
+      wikiExtract("ur.wikipedia.org", topic.ur),
+      wikiExtract("sd.wikipedia.org", topic.sd),
+    ]);
+    if (!en && !ur && !sd) return { ok: false as const, total: WIKI_PACK.length };
+    return {
+      ok: true as const,
+      total: WIKI_PACK.length,
+      fact: {
+        id: `wiki-${topic.en}`,
+        keys: topic.keys,
+        en: en || ur || sd,
+        ur: ur || en,
+        sd: sd || ur || en,
+      },
+    };
+  });
