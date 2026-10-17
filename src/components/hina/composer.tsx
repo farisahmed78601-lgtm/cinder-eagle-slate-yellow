@@ -103,8 +103,11 @@ export function Composer({
             {sending ? <Square className="size-4" /> : <Send className="size-4" />}
           </button>
         </div>
-        <p className="hidden px-1 text-[11px] text-subtle sm:block">{copy.hint}</p>
-        {micNote ? <p className="px-1 text-[11px] leading-snug break-words text-danger">{micNote}</p> : null}
+        {micNote ? (
+          <p className="line-clamp-2 px-1 text-[11px] leading-snug text-muted">{micNote}</p>
+        ) : (
+          <p className="hidden px-1 text-[11px] text-subtle sm:block">{copy.hint}</p>
+        )}
       </div>
     </form>
   );

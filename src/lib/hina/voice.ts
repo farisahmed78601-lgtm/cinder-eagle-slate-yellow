@@ -323,10 +323,10 @@ function sentences(text: string) {
 }
 
 function rateValue() {
-  const speed = loadLive().rate === "slow" ? 0.94 : loadLive().rate === "fast" ? 1.06 : 1;
-  const speaker = loadLive().speaker;
-  const base = speaker === "male" ? 0.9 : speaker === "female" ? 1.03 : 1;
-  return base * speed;
+  const speed = loadLive().rate;
+  if (speed === "slow") return 0.92;
+  if (speed === "fast") return 1.05;
+  return 1;
 }
 
 let clip: HTMLAudioElement | null = null;

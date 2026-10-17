@@ -89,24 +89,21 @@ function forUrduVoice(text: string, lang: Lang) {
 }
 
 function speechChunks(text: string) {
-  const clean = text.replace(/\s+/g, " ").trim().slice(0, 700);
+  const clean = text.replace(/\s+/g, " ").trim().slice(0, 420);
+  if (clean.length <= 180) return [clean];
   const sentences = clean.split(/(?<=[۔.!?])\s+/).map((s) => s.trim()).filter(Boolean);
   const out: string[] = [];
+  let buf = "";
   for (const sentence of sentences.length ? sentences : [clean]) {
-    if (sentence.length <= 140) {
-      out.push(sentence);
+    if ((buf + " " + sentence).trim().length <= 180) {
+      buf = (buf + " " + sentence).trim();
       continue;
     }
-    let rest = sentence;
-    while (rest.length > 140) {
-      let cut = rest.lastIndexOf(" ", 140);
-      if (cut < 30) cut = 140;
-      out.push(rest.slice(0, cut).trim());
-      rest = rest.slice(cut).trim();
-    }
-    if (rest) out.push(rest);
+    if (buf) out.push(buf);
+    buf = sentence.length <= 180 ? sentence : sentence.slice(0, 180);
   }
-  return out.slice(0, 5);
+  if (buf) out.push(buf);
+  return out.slice(0, 3);
 }
 
 async function fetchUrduMp3(piece: string) {

@@ -27,7 +27,7 @@ function renderInline(text: string) {
 export function MessageBody({ text, className }: { text: string; className?: string }) {
   const blocks = text.split(/```/);
   return (
-    <div className={cn("space-y-3 text-sm leading-relaxed text-fg", className)}>
+    <div className={cn("hina-copy space-y-3 text-sm leading-relaxed text-fg", className)}>
       {blocks.map((block, i) => {
         if (i % 2 === 1) {
           const nl = block.indexOf("\n");

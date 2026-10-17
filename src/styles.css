@@ -63,10 +63,10 @@ html[data-theme="light"] {
     font-family: var(--font-naskh);
   }
 
-  html[data-lang="ur"] body,
-  html[data-lang="sd"] body {
+  html[data-lang="ur"] .hina-copy,
+  html[data-lang="sd"] .hina-copy {
     font-family: var(--font-naskh);
-    line-height: 1.8;
+    line-height: 1.85;
   }
 
   @media (prefers-reduced-motion: reduce) {

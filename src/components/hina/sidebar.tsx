@@ -32,7 +32,7 @@ export function Sidebar({
       />
       <aside
         className={cn(
-          "flex h-full w-72 shrink-0 flex-col border-border bg-surface",
+          "flex h-dvh w-64 shrink-0 flex-col border-border bg-surface md:w-72",
           "max-md:fixed max-md:inset-y-0 max-md:z-40 max-md:w-[min(18.5rem,88vw)]",
           lang === "en" ? "border-r max-md:left-0" : "border-l max-md:right-0",
           open ? "max-md:translate-x-0" : lang === "en" ? "max-md:-translate-x-full" : "max-md:translate-x-full",

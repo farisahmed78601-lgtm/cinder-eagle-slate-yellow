@@ -249,7 +249,7 @@ export function Home({ embed = false }: { embed?: boolean }) {
   }
 
   return (
-    <div className="flex h-full min-h-0 overflow-hidden bg-bg text-fg">
+    <div className="flex h-dvh min-h-0 overflow-hidden bg-bg text-fg">
       {!embed && (
       <Sidebar
         open={sidebarOpen}
