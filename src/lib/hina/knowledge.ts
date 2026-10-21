@@ -200,6 +200,30 @@ const BUILT_IN: { test: RegExp; en: string; ur: string; sd: string }[] = [
     sd: "روپيو پاڪستان جي سڪو آهي. قيمت اها آهي جيڪا ماڻهو ڏيڻ تي راضي هجن. ٿوري بچت باقاعده، هر روپيو ساڳئي ڏينهن خرچ ڪرڻ کان وڌيڪ محفوظ آهي.",
   },
   {
+    test: /internet|انٹرنیٹ|انٽرنيٽ|wifi|وائی فائی/,
+    en: "The internet is a worldwide network of computers. Your phone or computer sends a request, and a server sends back a page, a picture, or a video. Wi-Fi is just the wireless link from your device to the router.",
+    ur: "انٹرنیٹ دنیا بھر کے کمپیوٹروں کا جال ہے۔ آپ کا فون یا کمپیوٹر درخواست بھیجتا ہے، اور سرور صفحہ، تصویر یا ویڈیو واپس بھیجتا ہے۔ وائی فائی صرف آپ کے آلے سے راؤٹر تک کی بے تار کڑی ہے۔",
+    sd: "انٽرنيٽ دنيا جي ڪمپيوٽرن جو جال آهي. فون يا ڪمپيوٽر درخواست موڪلي ٿو، ۽ سرور صفحو، تصوير يا وڊيو واپس موڪلي ٿو. وائي فائي اوزار کان راؤٽر تائين بي تار ڪڙي آهي.",
+  },
+  {
+    test: /computer|کمپیوٹر|ڪمپيوٽر/,
+    en: "A computer follows instructions. The processor does the thinking, memory holds what you are doing now, and storage keeps files after you turn it off. A program is a list of those instructions.",
+    ur: "کمپیوٹر ہدایات پر چلتا ہے۔ پروسیسر سوچتا ہے، میموری اب کا کام رکھتی ہے، اور اسٹوریج فائلیں بند کرنے کے بعد بھی سنبھالتی ہے۔ پروگرام ان ہدایتوں کی فہرست ہے۔",
+    sd: "ڪمپيوٽر هدايتن تي هلي ٿو. پروسيسر سوچي ٿو، ميموري هاڻوڪو ڪم رکي ٿي، ۽ اسٽوريج فائلون بند ڪرڻ کان پوءِ به رکي ٿي. پروگرام انهن هدايتن جي فهرست آهي.",
+  },
+  {
+    test: /weather|موسم|موسम|بارش|مينهن/,
+    en: "Weather is what the air is doing today: sun, cloud, rain, wind, and temperature. It changes from day to day. Climate is the usual pattern over many years.",
+    ur: "موسم آج کی ہوا کا حال ہے: دھوپ، بادل، بارش، ہوا اور درجہ حرارت۔ یہ دن بدن بدلتا ہے۔ آب و ہوا کئی سالوں کا معمول ہے۔",
+    sd: "موسم اڄ جي هوا جو حال آهي: سج، ڪڪر، مينهن، هوا ۽ گرمي. اهو ڏينهون ڏينهن بدلجي ٿو. آبهوا ڪيترن سالن جو معمول آهي.",
+  },
+  {
+    test: /jinnah|جناح|independence|آزادی|آزادي|14 august|چودہ اگست|چوڏهن آگسٽ/,
+    en: "Pakistan became independent on 14 August 1947. Muhammad Ali Jinnah, known as Quaid-e-Azam, led the movement. The country has four provinces: Punjab, Sindh, Khyber Pakhtunkhwa, and Balochistan, plus the capital Islamabad.",
+    ur: "پاکستان چودہ اگست انیس سو سینتالیس کو آزاد ہوا۔ محمد علی جناح، قائد اعظم، اس جدوجہد کے رہنما تھے۔ چار صوبے ہیں: پنجاب، سندھ، خیبر پختونخوا اور بلوچستان، اور دارالحکومت اسلام آباد۔",
+    sd: "پاڪستان چوڏهن آگسٽ اوڻيهه سو ستيتاليهه تي آزاد ٿيو. محمد علي جناح، قائد اعظم، ان هلچل جو اڳواڻ هو. چار صوبا آهن: پنجاب، سنڌ، خيبر پختونخواه ۽ بلوچستان، ۽ گادي اسلام آباد.",
+  },
+  {
     test: /javascript|جاوا اسکرپٹ|جاوا اسڪرپٽ|css|سی ایس ایس/,
     en: "CSS sets how a page looks: color, size, and space. JavaScript makes the page react, for example showing a message when a button is pressed. HTML is the words and structure; CSS is the look; JavaScript is the behavior.",
     ur: "سی ایس ایس صفحے کی شکل بتاتا ہے: رنگ، سائز اور جگہ۔ جاوا اسکرپٹ صفحے کو ردِعمل دیتی ہے، جیسے بٹن دبانے پر پیغام۔ ایچ ٹی ایم ایل الفاظ اور ڈھانچہ ہے، سی ایس ایس شکل، جاوا اسکرپٹ کام۔",

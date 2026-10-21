@@ -9,7 +9,9 @@ export const sendHinaMessage = createServerFn({ method: "POST" })
   .validator((input: { lang: Lang; messages: { role: "user" | "assistant"; content: string }[] }) => input)
   .handler(async ({ data }) => {
     const lastUser = [...data.messages].reverse().find((m) => m.role === "user")?.content ?? "";
-    return { ok: true as const, text: localHinaReply(lastUser, data.lang), free: true as const };
+    const { geminiReply } = await import("./gemini.server");
+    const text = await geminiReply(data.lang, data.messages);
+    return { ok: true as const, text: text || localHinaReply(lastUser, data.lang), free: true as const };
   });
 
 async function kenBurnsClip(file: string) {
@@ -57,9 +59,56 @@ export const generateHinaVideo = createServerFn({ method: "POST" })
     }
   });
 
-const SINDHI_TO_URDU: [string, string][] = [
-  ["۾", " میں "],
-  ["۽", " اور "],
+const SINDHI_WORDS: [string, string][] = [
+  ["ڳالهايان", "گالھایاں"],
+  ["ڳالهائي", "گالھائی"],
+  ["ڳالهايو", "گالھایو"],
+  ["ڳالهائڻ", "گالھائڻ"],
+  ["ڳالهه", "گالھ"],
+  ["آهيان", "آہیاں"],
+  ["آهيون", "آہیوں"],
+  ["آهيو", "آہیو"],
+  ["آهن", "آہن"],
+  ["آهي", "آہے"],
+  ["ڪريان", "کریاں"],
+  ["ڪريون", "کریوں"],
+  ["ڪريو", "کریو"],
+  ["ڪري", "کرے"],
+  ["هناءَ", "ہنا"],
+  ["هناء", "ہنا"],
+  ["سنڌي", "سندھی"],
+  ["سنڌ", "سندھ"],
+  ["پاڪستان", "پاکستان"],
+  ["ڪراچي", "کراچی"],
+  ["حيدرآباد", "حیدرآباد"],
+  ["ٿيون", "تھیوں"],
+  ["ٿي", "تھی"],
+  ["ٿو", "تھو"],
+  ["ٿا", "تھا"],
+  ["پڇو", "پچھو"],
+  ["ڪجهه", "کچھ"],
+  ["سگهو", "سگھو"],
+  ["سگهي", "سگھے"],
+  ["ناهين", "ناہیں"],
+  ["ناهي", "ناہے"],
+  ["منهنجو", "منہنجو"],
+  ["منهنجي", "منہنجی"],
+  ["توهان", "توہاں"],
+  ["اوهان", "اوہاں"],
+  ["ڏينهن", "دینھن"],
+  ["تصويرون", "تصویرون"],
+  ["تصوير", "تصویر"],
+  ["وڊيو", "ویڈیو"],
+  ["انٽرنيٽ", "انٹرنیٹ"],
+  ["ڪمپيوٽر", "کمپیوٹر"],
+  ["خوشي", "خوشی"],
+  ["رهي", "رہی"],
+  ["رهيا", "رہیا"],
+  ["۾", "میں"],
+  ["۽", "این"],
+];
+
+const SINDHI_LETTERS: [string, string][] = [
   ["ٻ", "ب"],
   ["ڀ", "بھ"],
   ["ٺ", "ٹھ"],
@@ -77,40 +126,46 @@ const SINDHI_TO_URDU: [string, string][] = [
   ["ڳ", "گ"],
   ["ڱ", "نگ"],
   ["ڻ", "ن"],
+  ["ھ", "ہ"],
 ];
 
-/** Sindhi letters Google’s Urdu voice would skip, rewritten so the sentence is spoken. */
-function forUrduVoice(text: string, lang: Lang) {
-  let out = text.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "");
-  if (lang === "sd") {
-    for (const [from, to] of SINDHI_TO_URDU) out = out.split(from).join(to);
-  }
-  return out.replace(/\s+/g, " ").trim();
+/** Sindhi written so an Urdu speaker says the Sindhi words, not skipped letters. */
+function forSindhiVoice(text: string) {
+  let out = text;
+  for (const [from, to] of SINDHI_WORDS) out = out.split(from).join(to);
+  for (const [from, to] of SINDHI_LETTERS) out = out.split(from).join(to);
+  return out.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "").replace(/\s+/g, " ").trim();
 }
 
-function speechChunks(text: string) {
-  const clean = text.replace(/\s+/g, " ").trim().slice(0, 420);
-  if (clean.length <= 180) return [clean];
-  const sentences = clean.split(/(?<=[۔.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+function forUrduVoice(text: string) {
+  return text.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "").replace(/\s+/g, " ").trim();
+}
+
+function speechChunks(text: string, lang: Lang) {
+  const limit = lang === "sd" ? 90 : 200;
+  const max = lang === "sd" ? 4 : 2;
+  const clean = text.replace(/\s+/g, " ").trim().slice(0, 500);
+  const sentences = clean.split(/(?<=[۔.!?،,])\s*/).map((s) => s.trim()).filter(Boolean);
   const out: string[] = [];
   let buf = "";
   for (const sentence of sentences.length ? sentences : [clean]) {
-    if ((buf + " " + sentence).trim().length <= 180) {
-      buf = (buf + " " + sentence).trim();
+    const next = (buf + " " + sentence).trim();
+    if (next.length <= limit) {
+      buf = next;
       continue;
     }
     if (buf) out.push(buf);
-    buf = sentence.length <= 180 ? sentence : sentence.slice(0, 180);
+    buf = sentence.slice(0, limit);
   }
   if (buf) out.push(buf);
-  return out.slice(0, 3);
+  return out.slice(0, max);
 }
 
-async function fetchUrduMp3(piece: string) {
+async function fetchVoiceMp3(piece: string, tl: string) {
   const q = encodeURIComponent(piece);
   const urls = [
-    `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ur&q=${q}`,
-    `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=ur&q=${q}`,
+    `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${tl}&q=${q}`,
+    `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=${tl}&q=${q}`,
   ];
   for (const url of urls) {
     try {
@@ -134,11 +189,14 @@ async function fetchUrduMp3(piece: string) {
 export const speakHinaAudio = createServerFn({ method: "POST" })
   .validator((input: { text: string; lang: Lang }) => input)
   .handler(async ({ data }) => {
-    if (data.lang === "en") return { ok: false as const };
-    const spoken = forUrduVoice(data.text, data.lang);
+    const { geminiSpeech } = await import("./gemini.server");
+    const clip = await geminiSpeech(data.text, data.lang);
+    if (clip) return { ok: true as const, clips: [clip] };
+    const spoken = data.lang === "sd" ? forSindhiVoice(data.text) : data.lang === "ur" ? forUrduVoice(data.text) : data.text;
+    const tl = data.lang === "en" ? "en-GB" : "ur";
     const parts: Buffer[] = [];
-    for (const piece of speechChunks(spoken)) {
-      const buf = await fetchUrduMp3(piece);
+    for (const piece of speechChunks(spoken, data.lang)) {
+      const buf = await fetchVoiceMp3(piece, tl);
       if (!buf) return { ok: false as const };
       parts.push(buf);
     }

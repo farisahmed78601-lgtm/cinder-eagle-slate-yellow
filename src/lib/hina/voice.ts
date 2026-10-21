@@ -334,22 +334,43 @@ let clip: HTMLAudioElement | null = null;
 let playGen = 0;
 
 function playClip(src: string, rate: number) {
-  return new Promise<void>((resolve) => {
+  return new Promise<boolean>((resolve) => {
     const audio = new Audio(src);
     clip = audio;
     audio.playbackRate = rate;
-    audio.onended = () => resolve();
-    audio.onerror = () => resolve();
-    void audio.play().then(() => undefined, () => resolve());
+    let started = false;
+    audio.onplaying = () => {
+      started = true;
+    };
+    audio.onended = () => resolve(started);
+    audio.onerror = () => resolve(false);
+    void audio.play().then(
+      () => {
+        started = true;
+      },
+      () => resolve(false),
+    );
   });
 }
 
 async function playClips(srcs: string[], rate: number) {
   const gen = ++playGen;
+  let any = false;
   for (const src of srcs) {
-    if (gen !== playGen) return;
-    await playClip(src, rate);
+    if (gen !== playGen) return any;
+    const ok = await playClip(src, rate);
+    if (!ok) return any;
+    any = true;
   }
+  return any;
+}
+
+function naturalEnglish(voices: SpeechSynthesisVoice[]) {
+  const prefer =
+    /aria|jenny|sonia|libby|natasha|samantha|serena|fiona|google uk english female|uk english female/i;
+  return (
+    voices.find((v) => /^en/i.test(v.lang) && prefer.test(v.name) && !MALE.test(blob(v))) ?? null
+  );
 }
 
 function speakNow(text: string, lang: Lang) {
@@ -357,24 +378,22 @@ function speakNow(text: string, lang: Lang) {
   const male = loadLive().speaker === "male";
   const rate = rateValue();
   if (lang === "en") {
-    const pool = voices.filter((v) => /^en/i.test(v.lang));
     const voice =
-      pool.find((v) => (male ? MALE.test(blob(v)) : !MALE.test(blob(v)))) ??
-      pick(voices, /^en-(GB|US|AU)/i) ??
+      naturalEnglish(voices) ??
+      voices.find((v) => /^en/i.test(v.lang) && (male ? MALE.test(blob(v)) : !MALE.test(blob(v)))) ??
       pick(voices, /^en/i);
-    return queue(sentences(text), voice, voice?.lang || "en-GB", rate, male ? 0.92 : 1);
+    return queue(sentences(text), voice, voice?.lang || "en-GB", rate, 1);
   }
   const native =
     lang === "sd"
       ? pick(voices, /sindhi|^sd-/i) ?? pick(voices, /urdu|^ur-/i)
       : pick(voices, /urdu|^ur-/i);
   if (!native) return Promise.resolve();
-  const ulang = native.lang || "ur-PK";
-  return queue(sentences(text), native, ulang, rate, male ? 0.85 : 1.05);
+  return queue(sentences(text), native, native.lang || "ur-PK", rate, 1);
 }
 
 export function speakLocal(text: string, lang: Lang = "en") {
-  if (typeof window === "undefined") return Promise.resolve();
+  if (typeof window === "undefined") return Promise.resolve(false);
   const clean = text
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/[#*_`]/g, "")
@@ -383,39 +402,36 @@ export function speakLocal(text: string, lang: Lang = "en") {
     .replace(/[—–]/g, ", ")
     .replace(/\s+/g, " ")
     .trim();
-  if (!clean) return Promise.resolve();
-  const spoken = clean.slice(0, 700);
+  if (!clean) return Promise.resolve(false);
+  const spoken = clean.slice(0, 420);
 
   const run = async () => {
-    if (lang !== "en") {
-      try {
-        const clipAudio = await speakHinaAudio({ data: { text: spoken, lang } });
-        if (clipAudio.ok && clipAudio.clips.length) {
-          await playClips(clipAudio.clips, rateValue());
-          return;
-        }
-      } catch {
-        /* fall through to the phone voice */
+    const spokenVoice = spoken
+      .replace(/\.\.\./g, ", ")
+      .replace(/\s*\n+\s*/g, ". ")
+      .replace(/\s+/g, " ")
+      .trim();
+    try {
+      const clipAudio = await speakHinaAudio({ data: { text: spokenVoice, lang } });
+      if (clipAudio.ok && clipAudio.clips.length) {
+        const played = await playClips(clipAudio.clips, rateValue());
+        if (played) return true;
       }
+    } catch {
+      /* fall through to the phone voice */
     }
-    if (!window.speechSynthesis) return;
+    if (!window.speechSynthesis) return false;
     const say = () => speakNow(spoken, lang);
     if (window.speechSynthesis.getVoices().length > 0) {
       await say();
-      return;
+      return true;
     }
     await new Promise<void>((resolve) => {
-      window.speechSynthesis.addEventListener(
-        "voiceschanged",
-        () => {
-          void say().then(resolve);
-        },
-        { once: true },
-      );
-      window.setTimeout(() => {
-        void say().then(resolve);
-      }, 400);
+      window.speechSynthesis.addEventListener("voiceschanged", () => resolve(), { once: true });
+      window.setTimeout(resolve, 400);
     });
+    await say();
+    return true;
   };
   return run();
 }

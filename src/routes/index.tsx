@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Menu, Moon, Sun, Volume2, VolumeX, Wifi, WifiOff } from "lucide-react";
+import { Menu, Mic, Moon, Sun, Volume2, VolumeX, Wifi, WifiOff } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HinaAvatar } from "@/components/hina/avatar";
 import { Composer } from "@/components/hina/composer";
 import { MessageBody } from "@/components/hina/markdown";
 import { Sidebar } from "@/components/hina/sidebar";
-import { generateHinaImage, generateHinaVideo } from "@/lib/hina/api";
+import { generateHinaImage, generateHinaVideo, sendHinaMessage } from "@/lib/hina/api";
 import { t } from "@/lib/hina/i18n";
 import { localHinaReply } from "@/lib/hina/local";
 import { isGalleryRequest, pickGallery } from "@/lib/hina/gallery";
@@ -99,6 +99,38 @@ export function Home({ embed = false }: { embed?: boolean }) {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" });
   }, [messages.length, sending]);
 
+  useEffect(() => {
+    if (!hydrated) return;
+    if (sessionStorage.getItem("hina-speak-now") === "4") return;
+    sessionStorage.setItem("hina-speak-now", "4");
+    const langNow = useChatStore.getState().lang;
+    const ask = langNow === "ur" ? "اب بولیں" : langNow === "sd" ? "هاڻي ڳالهايو" : "Please speak now";
+    const line =
+      langNow === "ur"
+        ? "السلام علیکم، میں ہنا ہوں۔ میں اب بول رہی ہوں۔"
+        : langNow === "sd"
+          ? "سلام، مان هناءَ آهيان. مان هاڻي ڳالهائي رهي آهيان."
+          : "Hi, I’m Hina. I’m speaking now.";
+    const { conversationId } = useChatStore.getState().addUserMessage(ask);
+    useChatStore.getState().addAssistantMessage(conversationId, line);
+    setVoiceOn(true);
+    voiceOnRef.current = true;
+    let cancelUnlock = () => {};
+    const say = () => {
+      setTalking(true);
+      return speakLocal(line, langNow).finally(() => setTalking(false));
+    };
+    void say().then((ok) => {
+      if (ok) return;
+      const unlock = () => {
+        void say();
+      };
+      window.addEventListener("pointerdown", unlock, { once: true });
+      cancelUnlock = () => window.removeEventListener("pointerdown", unlock);
+    });
+    return () => cancelUnlock();
+  }, [hydrated, setVoiceOn, 4]);
+
   function armListen() {
     if (!talkRef.current || !canListen()) return;
     stopMic.current?.();
@@ -185,7 +217,11 @@ export function Home({ embed = false }: { embed?: boolean }) {
         await speakIfOn(pack.caption);
         return;
       }
-      const reply = localHinaReply(trimmed, langRef.current);
+      const history = (useChatStore.getState().conversations.find((c) => c.id === conversationId)?.messages ?? []).map(
+        (m) => ({ role: m.role, content: m.content }),
+      );
+      const result = await sendHinaMessage({ data: { lang: langRef.current, messages: history } });
+      const reply = result.text || localHinaReply(trimmed, langRef.current);
       addAssistantMessage(conversationId, reply);
       await speakIfOn(reply);
     } catch {
@@ -288,6 +324,18 @@ export function Home({ embed = false }: { embed?: boolean }) {
           <div className="flex items-center gap-1">
             <button
               type="button"
+              onClick={onTalk}
+              className={cn(
+                "inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium",
+                listening ? "bg-accent text-accent-fg" : "bg-fg text-bg",
+              )}
+              aria-label={listening ? copy.listening : copy.voiceChat}
+            >
+              <Mic className="size-4" />
+              <span>{listening ? copy.listening : copy.voiceChat}</span>
+            </button>
+            <button
+              type="button"
               onClick={() => {
                 if (voiceOn) stopSpeaking();
                 toggleVoice();
@@ -312,6 +360,8 @@ export function Home({ embed = false }: { embed?: boolean }) {
           {showEmpty ? (
             <EmptyState
               onPrompt={(p) => void sendText(p)}
+              onVoice={onTalk}
+              listening={listening}
               hello={live.greeting[lang] || copy.hello}
               tagline={live.tagline[lang] || copy.tagline}
             />
@@ -408,10 +458,14 @@ export function Home({ embed = false }: { embed?: boolean }) {
 
 function EmptyState({
   onPrompt,
+  onVoice,
+  listening,
   hello,
   tagline,
 }: {
   onPrompt: (p: string) => void;
+  onVoice: () => void;
+  listening: boolean;
   hello: string;
   tagline: string;
 }) {
@@ -419,9 +473,20 @@ function EmptyState({
   const copy = t[lang];
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center px-6 py-16 text-center">
-      <HinaAvatar size={88} />
+      <HinaAvatar size={88} talking={listening} />
       <h1 className="mt-6 font-display text-3xl tracking-tight">{hello}</h1>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">{tagline}</p>
+      <button
+        type="button"
+        onClick={onVoice}
+        className={cn(
+          "mt-6 inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-medium",
+          listening ? "bg-accent text-accent-fg" : "bg-fg text-bg",
+        )}
+      >
+        <Mic className="size-4" />
+        {listening ? copy.listening : copy.voiceChat}
+      </button>
       <div className="mt-8 grid w-full gap-2 sm:grid-cols-2">
         {copy.prompts.map((p) => (
           <button
