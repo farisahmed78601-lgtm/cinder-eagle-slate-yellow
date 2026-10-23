@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hina",
+      "hasCanvas": false,
+      "bodyTextLen": 229,
+      "bodyTextHash": "1faa5f167aed6ad9983f6a454eecd3239669f7740f590266e79293925aa82de8",
+      "bodyTextPrefix": "Hina EN اردو سنڌي New chat Please speak now Photos Admin Hina Ta",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/voice-btn.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hina",
+      "hasCanvas": false,
+      "bodyTextLen": 160,
+      "bodyTextHash": "6963de72148bde290966ee96519df448809f9670c6422a89fe5759f5bdecb241",
+      "bodyTextPrefix": "Hina EN اردو سنڌي New chat Please speak now Photos Admin Hina Ta",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/voice-btn-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/voice-btn.json"
+}

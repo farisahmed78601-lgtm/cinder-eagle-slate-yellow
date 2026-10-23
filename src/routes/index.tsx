@@ -45,6 +45,7 @@ export function Home({ embed = false }: { embed?: boolean }) {
       : loadLive(),
   );
   const [listening, setListening] = useState(false);
+  const [voiceChat, setVoiceChat] = useState(false);
   const [talking, setTalking] = useState(false);
   const [micNote, setMicNote] = useState("");
   const scroller = useRef<HTMLDivElement>(null);
@@ -145,6 +146,7 @@ export function Home({ embed = false }: { embed?: boolean }) {
       (error) => {
         setListening(false);
         talkRef.current = false;
+        setVoiceChat(false);
         if (error) setMicNote(t[langRef.current].mic);
       },
     );
@@ -154,6 +156,7 @@ export function Home({ embed = false }: { embed?: boolean }) {
     setMicNote("");
     if (talkRef.current) {
       talkRef.current = false;
+      setVoiceChat(false);
       stopMic.current?.();
       stopMic.current = null;
       setListening(false);
@@ -161,11 +164,13 @@ export function Home({ embed = false }: { embed?: boolean }) {
       return;
     }
     talkRef.current = true;
+    setVoiceChat(true);
     setVoiceOn(true);
     voiceOnRef.current = true;
     stopSpeaking();
     if (!canListen()) {
       talkRef.current = false;
+      setVoiceChat(false);
       setMicNote(t[langRef.current].mic);
       return;
     }
@@ -294,7 +299,7 @@ export function Home({ embed = false }: { embed?: boolean }) {
       />
       )}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <header className="flex h-14 items-center justify-between gap-3 border-b border-border bg-surface px-3 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
             <button
@@ -326,13 +331,13 @@ export function Home({ embed = false }: { embed?: boolean }) {
               type="button"
               onClick={onTalk}
               className={cn(
-                "inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium",
+                "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-sm font-medium",
                 listening ? "bg-accent text-accent-fg" : "bg-fg text-bg",
               )}
               aria-label={listening ? copy.listening : copy.voiceChat}
             >
               <Mic className="size-4" />
-              <span>{listening ? copy.listening : copy.voiceChat}</span>
+              <span className="hidden sm:inline">{listening ? copy.listening : copy.voiceChat}</span>
             </button>
             <button
               type="button"
@@ -451,6 +456,25 @@ export function Home({ embed = false }: { embed?: boolean }) {
           onTalk={onTalk}
           micNote={micNote}
         />
+        {voiceChat && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-bg/95 px-6 text-center">
+            <HinaAvatar size={120} talking={talking || listening} />
+            <div>
+              <p className="font-display text-2xl">Hina</p>
+              <p className="mt-1 text-sm text-muted">
+                {listening ? copy.listening : talking ? (lang === "ur" ? "بول رہی ہوں" : lang === "sd" ? "ڳالهائي رهي آهيان" : "Speaking") : copy.thinking}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onTalk}
+              className="inline-flex h-12 items-center gap-2 rounded-full bg-fg px-5 text-sm font-medium text-bg"
+            >
+              <Mic className="size-4" />
+              {copy.endVoice}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

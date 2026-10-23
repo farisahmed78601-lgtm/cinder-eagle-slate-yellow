@@ -39,19 +39,19 @@ export function Composer({
       }}
     >
       <div className="mx-auto flex max-w-3xl flex-col gap-2">
+        <button
+          type="button"
+          onClick={onTalk}
+          className={cn(
+            "flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-medium",
+            listening ? "bg-accent text-accent-fg" : "bg-fg text-bg",
+          )}
+          aria-label={listening ? copy.listening : copy.voiceChat}
+        >
+          <Mic className="size-5" />
+          <span>{listening ? copy.listening : copy.voiceChat}</span>
+        </button>
         <div className="flex items-end gap-2 rounded-xl border border-border bg-elevated p-2">
-          <button
-            type="button"
-            onClick={onTalk}
-            className={cn(
-              "flex h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-sm font-medium",
-              listening ? "bg-accent text-accent-fg" : "bg-surface text-fg",
-            )}
-            aria-label={listening ? copy.listening : copy.talk}
-          >
-            <Mic className="size-5" />
-            <span>{listening ? copy.listening : copy.talk}</span>
-          </button>
           <textarea
             rows={1}
             value={value}
