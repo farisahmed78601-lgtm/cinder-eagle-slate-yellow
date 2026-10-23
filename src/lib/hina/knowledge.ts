@@ -231,6 +231,99 @@ const BUILT_IN: { test: RegExp; en: string; ur: string; sd: string }[] = [
   },
 ];
 
+const WORLD: { test: RegExp; en: string; ur: string; sd: string }[] = [
+  {
+    test: /earth|planet earth|زمین کیا|زمين ڇا|دنیا|دنيا/,
+    en: "Earth is the third planet from the Sun and the only one known to have life. About eight billion people live here, on seven continents and five oceans. A day is one turn of Earth, and a year is one trip around the Sun.",
+    ur: "زمین سورج سے تیسرا سیارہ ہے اور واحد جگہ ہے جہاں زندگی معلوم ہے۔ تقریباً آٹھ ارب لوگ سات براعظموں اور پانچ سمندروں پر رہتے ہیں۔ ایک دن زمین کا ایک چکر ہے، اور ایک سال سورج کے گرد ایک چکر۔",
+    sd: "زمين سج کان ٽيون گرھ آهي ۽ اها جاءِ جتي زندگي معلوم آهي. لڳ ڀڳ اٺ ارب ماڻهو ستن براعظمن ۽ پنجن سمنڊن تي رهن ٿا. هڪ ڏينهن زمين جو هڪ چڪر آهي، ۽ هڪ سال سج جي چوڌاري هڪ چڪر.",
+  },
+  {
+    test: /continent|براعظم/,
+    en: "The seven continents are Africa, Antarctica, Asia, Europe, North America, South America, and Australia. Asia is the largest by land and by people. Antarctica is covered in ice and has no permanent cities.",
+    ur: "سات براعظم ہیں: افریقہ، انٹارکٹیکا، ایشیا، یورپ، شمالی امریکہ، جنوبی امریکہ اور آسٹریلیا۔ ایشیا زمین اور آبادی دونوں میں سب سے بڑا ہے۔ انٹارکٹیکا برف سے ڈھکا ہے اور وہاں مستقل شہر نہیں۔",
+    sd: "ست براعظم آهن: آفريڪا، انٽارڪٽيڪا، ايشيا، يورپ، اتر آمريڪا، ڏکڻ آمريڪا ۽ آسٽريليا. ايشيا سڀ کان وڏو آهي. انٽارڪٽيڪا برف سان ڍڪيل آهي.",
+  },
+  {
+    test: /ocean|سمندر|بحر/,
+    en: "The five oceans are the Pacific, Atlantic, Indian, Southern, and Arctic. The Pacific is the largest. Oceans cover most of Earth and drive weather by moving heat around the planet.",
+    ur: "پانچ سمندر ہیں: بحرالکاہل، بحر اوقیانوس، بحر ہند، جنوبی بحر اور بحر منجمد شمالی۔ بحرالکاہل سب سے بڑا ہے۔ سمندر زمین کا زیادہ تر حصہ ڈھانپتے ہیں اور گرمی کو حرکت دے کر موسم بناتے ہیں۔",
+    sd: "پنج سمنڊ آهن: پئسفڪ، ائٽلانٽڪ، هندي، ڏاکڻو ۽ آرڪٽڪ. پئسفڪ سڀ کان وڏو آهي. سمنڊ زمين جو گهڻو حصو ڍڪين ٿا.",
+  },
+  {
+    test: /asia|ایشیا|ايشيا/,
+    en: "Asia is the largest continent. It includes China, India, Pakistan, Japan, and the Middle East. The Himalayas, including Mount Everest, rise along its south. More than half of the world’s people live in Asia.",
+    ur: "ایشیا سب سے بڑا براعظم ہے۔ اس میں چین، بھارت، پاکستان، جاپان اور مشرق وسطیٰ شامل ہیں۔ ہمالیہ اور ماؤنٹ ایورسٹ اس کے جنوب میں ہیں۔ دنیا کے آدھے سے زیادہ لوگ ایشیا میں رہتے ہیں۔",
+    sd: "ايشيا سڀ کان وڏو براعظم آهي. ان ۾ چين، ڀارت، پاڪستان، جاپان ۽ وچ اوڀر اچن ٿا. هماليا ۽ مائونٽ ايورسٽ ان جي ڏکڻ ۾ آهن. دنيا جا اڌ کان وڌيڪ ماڻهو ايشيا ۾ رهن ٿا.",
+  },
+  {
+    test: /africa|افریقہ|آفريڪا/,
+    en: "Africa has 54 countries. The Sahara is the largest hot desert, the Nile is its famous river, and the continent is where the earliest human fossils have been found. Cairo, Lagos, and Johannesburg are major cities.",
+    ur: "افریقہ میں 54 ممالک ہیں۔ صحارا سب سے بڑا گرم ریگستان ہے، دریائے نیل مشہور ہے، اور قدیم انسانی باقیات یہیں ملی ہیں۔ قاہرہ، لاگوس اور جوہانسبرگ بڑے شہر ہیں۔",
+    sd: "آفريڪا ۾ 54 ملڪ آهن. صحارا سڀ کان وڏو گرم ريگستان آهي، نيل درياءُ مشهور آهي، ۽ پراڻا انساني نشان هتي مليا آهن.",
+  },
+  {
+    test: /europe|یورپ|يورپ/,
+    en: "Europe is a continent of many languages and countries, including the United Kingdom, France, Germany, Italy, and Spain. The European Union is a group of countries that share trade and some laws. Paris, London, and Rome are well known.",
+    ur: "یورپ بہت سی زبانوں اور ملکوں کا براعظم ہے، جن میں برطانیہ، فرانس، جرمنی، اٹلی اور سپین شامل ہیں۔ یورپی یونین ملکوں کا گروہ ہے جو تجارت اور کچھ قوانین بانٹتے ہیں۔ پیرس، لندن اور روم مشہور ہیں۔",
+    sd: "يورپ ڪيترين ٻولين ۽ ملڪن جو براعظم آهي، جن ۾ برطانيا، فرانس، جرمني، اٽلي ۽ اسپين اچن ٿا. يورپي يونين ملڪن جو گروهه آهي. پيرس، لنڊن ۽ روم مشهور آهن.",
+  },
+  {
+    test: /america|usa|united states|امریکہ|آمريڪا/,
+    en: "The United States is in North America. Its capital is Washington, D.C., and it has 50 states. New York and Los Angeles are among its largest cities. Canada is to the north and Mexico to the south.",
+    ur: "ریاستہائے متحدہ شمالی امریکہ میں ہے۔ دارالحکومت واشنگٹن ڈی سی ہے اور 50 ریاستیں ہیں۔ نیویارک اور لاس اینجلس بڑے شہر ہیں۔ شمال میں کینیڈا اور جنوب میں میکسیکو ہے۔",
+    sd: "آمريڪا اتر آمريڪا ۾ آهي. گادي واشنگٽن ڊي سي آهي ۽ 50 رياستون آهن. اتر ۾ ڪئناڊا ۽ ڏکڻ ۾ ميڪسيڪو آهي.",
+  },
+  {
+    test: /china|چین|چين/,
+    en: "China is in East Asia. The capital is Beijing. It has one of the world’s largest populations and economies. The Great Wall and the Yangtze River are famous. Mandarin is the main language.",
+    ur: "چین مشرقی ایشیا میں ہے۔ دارالحکومت بیجنگ ہے۔ آبادی اور معیشت دونوں میں یہ دنیا کے بڑے ملکوں میں ہے۔ دیوار چین اور دریائے یانگتسی مشہور ہیں۔ مینڈارن بڑی زبان ہے۔",
+    sd: "چين اوڀر ايشيا ۾ آهي. گادي بيجنگ آهي. آبادي ۽ معيشت ٻنهي ۾ وڏن ملڪن مان آهي. ديوار چين ۽ يانگزي درياءُ مشهور آهن.",
+  },
+  {
+    test: /india|بھارت|ڀارت|ہندوستان/,
+    en: "India is in South Asia. The capital is New Delhi, and Mumbai is a huge port city. India is the world’s most populous country. Hindi and English are widely used, and the Ganges is a sacred river.",
+    ur: "بھارت جنوبی ایشیا میں ہے۔ دارالحکومت نئی دہلی ہے اور ممبئی ایک بڑا بندرگاہی شہر ہے۔ بھارت دنیا کا سب سے زیادہ آباد ملک ہے۔ ہندی اور انگریزی عام ہیں، اور گنگا مقدس دریا ہے۔",
+    sd: "ڀارت ڏکڻ ايشيا ۾ آهي. گادي نئين دهلي آهي ۽ ممبئي وڏو بندرگاهه آهي. ڀارت دنيا جو سڀ کان وڌيڪ آبادي وارو ملڪ آهي. گنگا مقدس درياءُ آهي.",
+  },
+  {
+    test: /saudi|سعودی|سعودي|مکہ|مڪو/,
+    en: "Saudi Arabia is on the Arabian Peninsula. The capital is Riyadh. Makkah and Madinah, the two holiest cities in Islam, are here. Arabic is the language, and the country is known for oil and desert.",
+    ur: "سعودی عرب جزیرہ نما عرب پر ہے۔ دارالحکومت ریاض ہے۔ مکہ اور مدینہ، اسلام کے دو مقدس شہر، یہیں ہیں۔ زبان عربی ہے، اور ملک تیل اور صحرا کے لیے جانا جاتا ہے۔",
+    sd: "سعودي عرب عربي ٻيٽ تي آهي. گادي رياض آهي. مڪو ۽ مدينو، اسلام جا ٻه پاڪ شهر، هتي آهن. ٻولي عربي آهي.",
+  },
+  {
+    test: /united nations|\bun\b|اقوام متحدہ|اقوام متحده/,
+    en: "The United Nations was founded in 1945 so countries could talk instead of only fighting. Its main home is in New York. It works on peace, health, and help after disasters. Almost every country is a member.",
+    ur: "اقوام متحدہ 1945 میں بنی تاکہ ملک بات کریں نہ کہ صرف لڑیں۔ اس کا گھر نیویارک میں ہے۔ یہ امن، صحت اور آفات کے بعد مدد پر کام کرتی ہے۔ تقریباً ہر ملک رکن ہے۔",
+    sd: "اقوام متحده 1945 ۾ ٺهي ته ملڪ ڳالهائين نه رڳو وڙهن. مکيه گهر نيويارڪ ۾ آهي. امن، صحت ۽ آفتن کان پوءِ مدد تي ڪم ڪري ٿي.",
+  },
+  {
+    test: /everest|ایورسٹ|ايورسٽ|himalaya|ہمالیہ|هماليا/,
+    en: "Mount Everest is the highest mountain on Earth, about 8,849 metres, in the Himalayas on the border of Nepal and China. People climb it, but the air is thin and the weather is dangerous.",
+    ur: "ماؤنٹ ایورسٹ زمین کا سب سے اونچا پہاڑ ہے، تقریباً 8849 میٹر، ہمالیہ میں نیپال اور چین کی سرحد پر۔ لوگ چڑھتے ہیں، مگر ہوا پتلی ہے اور موسم خطرناک۔",
+    sd: "مائونٽ ايورسٽ زمين جو سڀ کان اوچو جبل آهي، لڳ ڀڳ 8849 ميٽر، هماليا ۾ نيپال ۽ چين جي سرحد تي.",
+  },
+  {
+    test: /amazon|ایمیزون|ایمازون|جنگل/,
+    en: "The Amazon rainforest is in South America, mostly in Brazil. It is the largest rainforest and holds a huge share of the world’s plants and animals. The Amazon River runs through it.",
+    ur: "ایمیزون کا جنگل جنوبی امریکہ میں ہے، زیادہ تر برازیل میں۔ یہ سب سے بڑا بارانی جنگل ہے اور دنیا کے بہت سے پودے اور جانور یہاں ہیں۔ دریائے ایمیزون اس میں سے گزرتا ہے۔",
+    sd: "ايميزون جو جنگل ڏکڻ آمريڪا ۾ آهي، گهڻو برازيل ۾. هي سڀ کان وڏو مينهن وارو جنگل آهي. درياءُ ايميزون ان مان وهندو آهي.",
+  },
+  {
+    test: /climate|آب و ہوا|موسمیاتی|گلوبل وارمنگ|global warming/,
+    en: "Climate is the usual weather of a place over many years. The world has been warming because people burn coal, oil, and gas, which add heat-trapping gases. Cleaner energy and less waste slow that change.",
+    ur: "آب و ہوا کسی جگہ کا کئی سالوں کا معمول کا موسم ہے۔ دنیا گرم ہو رہی ہے کیونکہ لوگ کوئلہ، تیل اور گیس جلاتے ہیں، جو گرمی روکنے والی گیسیں بڑھاتے ہیں۔ صاف توانائی اور کم فضلہ اس تبدیلی کو سست کرتے ہیں۔",
+    sd: "آبهوا ڪنهن جاءِ جو ڪيترن سالن جو معمول آهي. دنيا گرم ٿي رهي آهي ڇاڪاڻ ته ماڻهو ڪوئلو، تيل ۽ گئس ساڙين ٿا. صاف توانائي ۽ گهٽ فضول ان تبديلي کي سست ڪن ٿا.",
+  },
+  {
+    test: /atom|ایٹم|ايٽم|dna|ڈی این اے|ڊي اين اي/,
+    en: "An atom is the tiny unit of an element, made of protons, neutrons, and electrons. DNA is the long molecule in cells that carries the instructions for how a living thing grows. Genes are sections of that DNA.",
+    ur: "ایٹم عنصر کی چھوٹی اکائی ہے، پروٹون، نیوٹران اور الیکٹران سے۔ ڈی این اے خلیوں میں لمبا مالیکیول ہے جو بتاتا ہے کہ جاندار کیسے بڑھے۔ جینز اسی ڈی این اے کے حصے ہیں۔",
+    sd: "ايٽم عنصر جي ننڍي اکائي آهي، پروٽان، نيوٽران ۽ اليڪٽران سان. ڊي اين اي خلين ۾ ڊگهو ماليڪيول آهي جيڪو ٻڌائي ٿو ته جاندار ڪيئن وڌي. جينز ان جا ٽڪرا آهن.",
+  },
+];
+
 function customFact(q: string, lang: Lang): string | null {
   const facts = loadLive().facts ?? [];
   for (const fact of facts) {
@@ -265,6 +358,9 @@ export function knowledgeReply(userText: string, lang: Lang): string {
 
   const known = builtIn(q, userText, lang);
   if (known) return known;
+
+  const world = WORLD.find((item) => item.test.test(`${q} ${userText}`));
+  if (world) return tr(lang, world.en, world.ur, world.sd);
 
   if (/^(hi|hello|hey|yo|salam|salaam|سلام|السلام)/.test(q) || q.includes("how are you")) {
     return tr(
@@ -344,12 +440,11 @@ export function knowledgeReply(userText: string, lang: Lang): string {
   }
 
   if (/explain|what is|define|کیوں|ڇو|سمجھا|سمجها|کیا ہے|ڇا آهي/.test(q)) {
-    const topic = userText.replace(/explain|what is|define|simply|کیوں|ڇو|سمجھاؤ|سمجهايو|کیا ہے|ڇا آهي/gi, "").trim() || userText;
     return tr(
       lang,
-      `${topic}: say what it is in one line, why people use it, and one small example. If you name the exact word, I’ll go deeper.`,
-      `${topic}: ایک لائن میں یہ کیا ہے، لوگ اسے کیوں استعمال کرتے ہیں، اور ایک چھوٹی مثال۔ عین لفظ بتائیں تو میں مزید کھولوں گی۔`,
-      `${topic}: هڪ سٽ ۾ ڇا آهي، ماڻهو ڇو استعمال ڪن ٿا، ۽ هڪ ننڍي مثال.`,
+      "I can explain that. Name the exact thing — a country, a science word, or a place — and I’ll say what it is, why it matters, and one clear example.",
+      "میں یہ سمجھا سکتی ہوں۔ عین چیز کا نام بتائیں — ملک، سائنس کا لفظ، یا جگہ — میں بتاؤں گی یہ کیا ہے، کیوں اہم ہے، اور ایک صاف مثال۔",
+      "مان اهو سمجهائي سگهان ٿي. عين شيءِ جو نالو ٻڌايو — ملڪ، سائنس جو لفظ، يا جاءِ — مان ٻڌائيندس ڇا آهي، ڇو اهم آهي، ۽ هڪ صاف مثال.",
     );
   }
 
